@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BOOST — Descargar el log</title>
+<meta name="theme-color" content="#070707">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Log">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/log.css">
+</head>
+
+<body>
+<div class="ambiente" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="./" aria-label="BOOST">
+    <img src="assets/simbolo.png" width="320" height="210" alt="" aria-hidden="true">
+    <span>BOOST<i>.</i></span>
+  </a>
+  <span class="chip" id="chipEstado">Sin conectar</span>
+</header>
+
+<main>
+
+<div class="panel" id="panel-conectar">
+  <p class="eyebrow">Herramienta interna</p>
+  <h1>Descargar<br>el log</h1>
+  <p class="lead">El sensor guarda las series en su memoria interna aunque el
+    teléfono no esté cerca. Acá se bajan como archivos <code>.vbt</code>, que
+    es el mismo formato que leen <code>replay.exe</code> y
+    <code>metrics.py</code>. Es de donde sale el dataset.</p>
+
+  <p class="warn" id="soporteNota" hidden></p>
+
+  <div class="spacer"></div>
+
+  <button class="btn btn--primary btn--big" id="btnConnect" type="button">
+    <span id="icoBt"></span><span>Conectar el sensor</span>
+  </button>
+  <button class="btn btn--ghost" id="btnSim" type="button">Usar el simulador</button>
+  <p class="note">El simulador trae tres sesiones de mentira, una de ellas
+    cortada por la mitad, que es lo que pasa cuando se acaba la batería
+    entrenando.</p>
+</div>
+
+<div class="panel" id="panel-lista" hidden>
+  <div class="log__head">
+    <div>
+      <p class="eyebrow">Sesiones grabadas</p>
+      <h2 id="nombreSensor">—</h2>
+    </div>
+    <button class="btn btn--ghost btn--chico" id="btnRecargar" type="button">
+      <span id="icoRecargar"></span><span>Releer</span>
+    </button>
+  </div>
+
+  <p class="note note--libre" id="espacio"></p>
+
+  <div id="sesiones"></div>
+
+  <p class="vacio" id="vacio" hidden>No hay ninguna sesión grabada todavía.
+    El sensor graba solo cuando está en modo logger.</p>
+
+  <div class="spacer"></div>
+
+  <button class="btn btn--peligro" id="btnBorrar" type="button">
+    <span id="icoBorrar"></span><span>Borrar todo el log</span>
+  </button>
+  <p class="note">Borrar tarda decenas de segundos y no se puede deshacer.
+    Bajá todo lo que quieras conservar <em>antes</em>.</p>
+  <button class="btn btn--ghost" id="btnDesconectar" type="button">Desconectar</button>
+</div>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="js/log.js"></script>
+</body>
+</html>

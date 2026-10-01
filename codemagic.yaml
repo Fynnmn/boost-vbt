@@ -1,0 +1,52 @@
+workflows:
+  ios-testflight:
+    name: BOOST iOS → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    # La app vive en app-ios/ dentro del repo de BOOST (importa app/js/protocol.js).
+    working_directory: app-ios
+    integrations:
+      app_store_connect: BOOST_ASC          # nombre que le pusiste a la clave API en Codemagic
+    environment:
+      groups:
+        - boost_ios                          # APPLE_TEAM_ID, CERTIFICATE_PRIVATE_KEY y GOOGLE_IOS_CLIENT_ID
+      vars:
+        BUNDLE_ID: "app.boost.velo"          # igual que appId en capacitor.config.json
+      node: 22
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events: [tag]
+      tag_patterns:
+        - pattern: "v*"
+    scripts:
+      - name: Dependencias
+        script: npm ci
+      - name: Front-end (diseño + capa nativa)
+        script: npm run build
+      - name: Proyecto iOS
+        script: |
+          rm -rf ios
+          npx cap add ios
+          npx cap sync ios
+      - name: Partes nativas (plugin, Dynamic Island, pantalla bloqueada)
+        script: |
+          gem list -i xcodeproj >/dev/null || gem install xcodeproj --no-document
+          ruby scripts/ios/setup_native.rb
+      - name: Firma
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files "$BUNDLE_ID.LiveActivity" --type IOS_APP_STORE --create
+          keychain add-certificates
+          xcode-project use-profiles
+      - name: Compilar IPA
+        script: xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa          # relativo a working_directory
+      - app-ios/build/ios/ipa/*.ipa  # por si Codemagic lo toma desde la raíz
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

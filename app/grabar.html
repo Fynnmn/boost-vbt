@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BOOST — Grabar dataset</title>
+<meta name="theme-color" content="#070707">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Grabar">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/grabar.css">
+</head>
+
+<body>
+<div class="ambiente" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="./" aria-label="BOOST">
+    <img src="assets/simbolo.png" width="320" height="210" alt="" aria-hidden="true">
+    <span>BOOST<i>.</i></span>
+  </a>
+  <span class="chip">Dataset</span>
+</header>
+
+<main>
+
+<!-- Esta pantalla NO es el producto: es la herramienta para juntar señal
+     humana real mientras el sensor no llegó. Si alguien la encuentra sin
+     contexto, tiene que entender eso en la primera línea. -->
+<div class="panel" id="panel-config">
+  <p class="eyebrow">Herramienta interna</p>
+  <h1>Grabar con<br>el teléfono</h1>
+  <p class="lead">Atá el teléfono a la barra y hacé la serie. Se graba el
+    acelerómetro y el giroscopio en el mismo formato que el sensor, para
+    probar el algoritmo de conteo contra movimiento real.</p>
+
+  <p class="warn" id="soporteNota" hidden></p>
+
+  <div class="exercises" id="exercises" role="radiogroup" aria-label="Ejercicio"></div>
+
+  <div class="loadcard">
+    <p class="loadcard__h">Carga en la barra</p>
+    <div class="load">
+      <button class="load__step" id="loadMinus" type="button" aria-label="Bajar 2,5 kg"></button>
+      <div class="load__value">
+        <input id="loadInput" class="load__num" type="text" inputmode="decimal" value="60" aria-label="Carga en kilos">
+        <span class="load__unit">kg</span>
+      </div>
+      <button class="load__step" id="loadPlus" type="button" aria-label="Subir 2,5 kg"></button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <button class="btn btn--primary btn--big" id="btnGrabar" type="button">
+    <span id="icoRec"></span><span>Empezar a grabar</span>
+  </button>
+  <p class="note note--calib">Dejá la barra quieta un segundo antes de la primera
+    repetición: el algoritmo necesita un instante de reposo para calibrarse.</p>
+</div>
+
+<!-- Grabando -->
+<div class="panel panel--rec" id="panel-rec" hidden>
+  <div class="rec__head">
+    <span class="rec__dot" aria-hidden="true"></span>
+    <span>GRABANDO</span>
+  </div>
+
+  <div class="rec__hero">
+    <div class="rec__time" id="recTiempo">0:00</div>
+    <div class="rec__sub" id="recSub">— muestras</div>
+  </div>
+
+  <div class="setcard">
+    <div class="minigrid">
+      <div>
+        <div class="minigrid__v" id="recHz">—</div>
+        <div class="minigrid__l">HZ REALES</div>
+      </div>
+      <div>
+        <div class="minigrid__v" id="recN">0</div>
+        <div class="minigrid__l">MUESTRAS</div>
+      </div>
+      <div>
+        <div class="minigrid__v" id="recKb">0</div>
+        <div class="minigrid__l">KB</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="note">La pantalla se mantiene encendida mientras grabás.
+    Contá las repeticiones en voz alta o filmá: el número real se anota
+    al terminar y es lo que después mide la precisión.</p>
+
+  <div class="spacer"></div>
+
+  <button class="btn btn--stop btn--big" id="btnParar" type="button">
+    <span id="icoStop"></span><span>Terminar</span>
+  </button>
+</div>
+
+<!-- Después de grabar -->
+<div class="panel" id="panel-fin" hidden>
+  <p class="eyebrow">Serie grabada</p>
+  <h2 id="finTitulo">—</h2>
+
+  <div class="setcard">
+    <div class="minigrid">
+      <div>
+        <div class="minigrid__v" id="finHz">—</div>
+        <div class="minigrid__l">HZ REALES</div>
+      </div>
+      <div>
+        <div class="minigrid__v" id="finN">—</div>
+        <div class="minigrid__l">MUESTRAS</div>
+      </div>
+      <div>
+        <div class="minigrid__v" id="finDur">—</div>
+        <div class="minigrid__l">SEGUNDOS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- El ground truth. Sin esto la grabación no sirve para medir nada:
+       metrics.py compara lo detectado contra este número. -->
+  <div class="reps">
+    <p class="reps__h">¿Cuántas repeticiones hiciste de verdad?</p>
+    <div class="reps__row">
+      <button class="load__step" id="repsMenos" type="button" aria-label="Una menos"></button>
+      <input id="repsInput" class="load__num" type="text" inputmode="numeric" value="8" aria-label="Repeticiones reales">
+      <button class="load__step" id="repsMas" type="button" aria-label="Una más"></button>
+    </div>
+    <p class="note">Es el dato contra el que se mide el algoritmo. Si no estás
+      seguro, mejor descartá la serie que anotar un número dudoso.</p>
+  </div>
+
+  <input class="nota" id="notaInput" type="text" placeholder="Nota opcional: “últimas 2 al fallo”, “rebote en el pecho”…">
+
+  <div class="spacer"></div>
+
+  <button class="btn btn--primary btn--big" id="btnBajar" type="button">
+    <span id="icoDown"></span><span>Descargar los 2 archivos</span>
+  </button>
+  <button class="btn btn--ghost" id="btnOtra" type="button">Grabar otra serie</button>
+  <p class="note" id="finNota"></p>
+</div>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="js/grabar.js"></script>
+</body>
+</html>

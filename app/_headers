@@ -1,0 +1,55 @@
+# Cabeceras de seguridad. Cloudflare Pages lee este archivo del directorio
+# publicado y lo aplica a las respuestas. No es código: si se rompe la
+# sintaxis, Pages lo ignora en silencio y el sitio queda sin protección, así
+# que después de tocarlo hay que verificar con:
+#
+#   curl -sI https://boost-app.pages.dev/ | grep -i "content-security\|permissions"
+
+/*
+  # De dónde puede cargar cosas la página. Todo lo nuestro es propio; la
+  # única excepción son las tipografías de Google, que necesitan la hoja de
+  # estilos desde googleapis y los archivos de fuente desde gstatic.
+  #
+  # 'unsafe-inline' está SÓLO en style-src, y hace falta porque main.js
+  # escribe estilos en el atributo `style` de algunos elementos (el ancho del
+  # campo de carga, el color de la pérdida). En script-src NO está: no hay un
+  # solo script en línea en el HTML, y dejarlo abierto sería regalar la
+  # defensa principal contra inyección de código.
+  #
+  # connect-src 'self' corta cualquier envío de datos a otro servidor. Para
+  # una app cuyo argumento es que tus datos no salen del teléfono, esto lo
+  # deja de ser una promesa y pasa a ser algo que el navegador hace cumplir.
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+
+  # Nadie puede meter la app dentro de un iframe. Evita el clickjacking:
+  # superponer una página encima de la nuestra para que el usuario toque
+  # algo distinto de lo que cree.
+  X-Frame-Options: DENY
+
+  # El navegador respeta el Content-Type declarado en vez de adivinarlo. Sin
+  # esto, un archivo subido con el tipo equivocado puede terminar
+  # ejecutándose como script.
+  X-Content-Type-Options: nosniff
+
+  # Al salir hacia otro sitio se manda el origen, nunca la ruta completa.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Permisos del navegador. Bluetooth queda habilitado para nuestro propio
+  # origen —es el corazón de la app— y todo lo demás se apaga: la app no
+  # necesita cámara, micrófono ni ubicación, y declararlo evita que un
+  # script comprometido pueda siquiera pedirlos.
+  Permissions-Policy: bluetooth=(self), accelerometer=(), camera=(), microphone=(), geolocation=(), gyroscope=(), magnetometer=(), payment=(), usb=(), interest-cohort=()
+
+  # HTTPS obligatorio por dos años, subdominios incluidos. Web Bluetooth ya
+  # exige contexto seguro, así que esto no rompe nada y cierra el hueco de
+  # la primera visita por HTTP.
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+
+  # Aísla la app de otras pestañas del navegador.
+  Cross-Origin-Opener-Policy: same-origin
+  X-Robots-Tag: noindex
+
+# El service worker no se cachea: si el navegador se queda con uno viejo,
+# la app queda congelada en una versión anterior y ninguna corrección llega.
+/sw.js
+  Cache-Control: no-cache

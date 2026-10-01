@@ -1,0 +1,52 @@
+# Cabeceras de seguridad de la landing. Cloudflare Pages lee este archivo del
+# directorio publicado. TIENE que ir en el deploy, igual que robots.txt y
+# sitemap.xml. Verificar después de cada subida:
+#
+#   curl -sI https://boost-landing-7jg.pages.dev/ | grep -i "content-security\|x-frame"
+
+/*
+  # La landing carga más cosas de afuera que la app, y cada origen está acá
+  # por un motivo concreto:
+  #   unpkg.com      -> Lenis, el scroll suave (va con SRI en el HTML)
+  #   gstatic.com    -> el SDK de Firebase, que se importa dinámicamente
+  #   googleapis.com -> la hoja de estilos de las tipografías
+  #   firestore...   -> a donde se manda el mail de la lista de espera
+  # Cualquier otro destino queda bloqueado por el navegador. Si algún día se
+  # agrega una librería nueva y "no anda", es porque falta acá: agregarla a
+  # mano es justamente el control que se busca.
+  #
+  # script-src va SIN 'unsafe-inline', que es lo que hace que esta CSP sirva
+  # de verdad. Se comprobó que la página no lo necesita: no hay ni un
+  # manejador inline (onclick=, onload=) en todo el HTML, y el único bloque
+  # <script> inline es el JSON-LD, que el navegador trata como datos y nunca
+  # ejecuta. Si alguna vez hace falta agregar un script inline, la respuesta
+  # correcta es moverlo a un archivo, no aflojar esta línea.
+  #
+  # style-src sí lleva 'unsafe-inline': el HTML usa atributos style= para
+  # posicionar las burbujas de la escena, y main.js escribe estilos en cada
+  # frame del scroll. Un CSS inyectado puede afear la página, pero no
+  # ejecuta código: es un riesgo muy distinto al de un script.
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://firestore.googleapis.com https://www.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+
+  # Clickjacking. Sin esto, cualquiera puede meter la landing dentro de un
+  # iframe invisible, poner su propia página encima y hacer que la gente
+  # apriete "Solicitar acceso" creyendo que aprieta otra cosa.
+  X-Frame-Options: DENY
+
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # La landing no necesita ninguno de estos permisos. Declararlo apagado
+  # evita que un script comprometido pueda siquiera pedirlos.
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), interest-cohort=()
+
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin
+
+# El sitemap y el robots se sirven con su tipo correcto o el SEO se rompe
+# en silencio (Cloudflare devuelve el HTML con estado 200 en vez de 404).
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8

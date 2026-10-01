@@ -1,0 +1,11 @@
+{
+  "exercise": "bench",
+  "load_kg": 60.0,
+  "intended_reps": 8,
+  "grinders": 0,
+  "tempo": "controlado",
+  "paused": true,
+  "bar_type": "olympic",
+  "mount": "sleeve-inner",
+  "notes": "sintetico -- no es evidencia de nada, es andamio"
+}

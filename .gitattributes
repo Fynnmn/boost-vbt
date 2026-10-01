@@ -1,0 +1,15 @@
+# Estadísticas de lenguajes de GitHub: excluir bundles generados y material de marca
+app/design/** linguist-generated
+app-ios/design/** linguist-generated
+design-system/ds-bundle/** linguist-generated
+marca/** linguist-vendored
+video/** linguist-vendored
+diseno/** linguist-vendored
+.ai/** linguist-documentation
+
+# Binarios
+*.png binary
+*.jpg binary
+*.webp binary
+*.3mf binary
+*.obj binary

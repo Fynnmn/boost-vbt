@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>@keyframes nbBreath{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1.3px) scale(1.012)}}@keyframes nbSway{0%,100%{transform:rotate(-2.2deg)}50%{transform:rotate(2.2deg)}}@keyframes nbLag{0%,100%{transform:translateY(.4px)}50%{transform:translateY(-1.2px)}}@keyframes nbBlink2{0%,84%,89%,93%,100%{transform:scaleY(1)}86.5%{transform:scaleY(.08)}91%{transform:scaleY(.08)}}@keyframes nbLook2{0%,16%{transform:translate(0,0)}24%,40%{transform:translate(-3.6px,.4px)}50%,64%{transform:translate(3.2px,-.8px)}74%,100%{transform:translate(0,0)}}@keyframes nbShine{0%{transform:translateX(-34px) skewX(-20deg);opacity:0}6%{opacity:1}26%{transform:translateX(38px) skewX(-20deg);opacity:1}30%,100%{transform:translateX(38px) skewX(-20deg);opacity:0}}@keyframes nbNod{0%,100%{transform:rotate(0) translateY(0)}50%{transform:rotate(2.5deg) translateY(.8px)}}@keyframes nbCock{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(-3deg)}}@keyframes nbEyeUp{0%,100%{transform:translate(1px,-3px)}50%{transform:translate(-1px,-3.6px)}}@keyframes nbGlowP{0%,100%{opacity:.85}50%{opacity:1}}@keyframes nbLift{0%,100%{transform:translateY(0)}18%,26%{transform:translateY(-8px)}44%{transform:translateY(0)}62%,70%{transform:translateY(-8px)}88%{transform:translateY(0)}}@keyframes nbStrain{0%,100%{transform:scaleY(1)}12%,88%{transform:scaleY(.42)}}@keyframes nbShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-.5px)}40%,80%{transform:translateX(.5px)}}@keyframes nbHop{0%,100%{transform:translateY(0) scale(1,1)}14%{transform:translateY(1.4px) scale(1.05,.94)}36%{transform:translateY(-8px) scale(.96,1.05)}56%{transform:translateY(0) scale(1.05,.95)}70%{transform:translateY(-2.4px) scale(.99,1.01)}84%{transform:translateY(0) scale(1,1)}}@keyframes nbPop{0%{transform:scale(.2);opacity:0}30%{transform:scale(1.15);opacity:1}45%,85%{transform:scale(1);opacity:1}100%{transform:scale(.6);opacity:0}}@keyframes nbWinkE{0%,15%,80%,100%{transform:scaleY(1)}25%,68%{transform:scaleY(.1)}}@keyframes nbWinkH{0%,100%{transform:rotate(0)}25%,68%{transform:rotate(-7deg)}}@keyframes nbPeek{0%,100%{transform:translate(0,0)}14%,30%{transform:translate(-5px,-2.5px)}42%,58%{transform:translate(5px,-2.5px)}70%,86%{transform:translate(0,2.5px)}}@keyframes nbPeekH{0%,100%{transform:rotate(0)}14%,30%{transform:rotate(-4deg)}42%,58%{transform:rotate(4deg)}}@keyframes nbSpinP{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}@keyframes nbBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.12)}}@keyframes nbLook{0%,40%,100%{transform:translate(0,0)}50%,62%{transform:translate(-3px,0)}72%,86%{transform:translate(3px,0)}}@keyframes nbEq{0%,100%{transform:scaleY(.45)}50%{transform:scaleY(1.15)}}@keyframes nbDot{0%,80%,100%{transform:translateY(0);opacity:.45}40%{transform:translateY(-3px);opacity:1}}@keyframes nbSpin{to{transform:rotate(360deg)}}@keyframes nbTwinkle{0%,100%{transform:scale(.7) rotate(0);opacity:.7}50%{transform:scale(1.1) rotate(45deg);opacity:1}}@keyframes nbPulse{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.7);opacity:0}}@keyframes nbBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}@keyframes nbOrbit{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(-8deg)}}@keyframes nbAnt{0%,100%{opacity:.6}50%{opacity:1}}@keyframes nbPlate{0%,100%{transform:translateX(0)}50%{transform:translateX(-1.5px)}}@keyframes nbPlateR{0%,100%{transform:translateX(0)}50%{transform:translateX(1.5px)}}@keyframes nbAura{0%,100%{transform:scale(.9);opacity:.65}50%{transform:scale(1.08);opacity:1}}@keyframes nbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes nbScan{0%,100%{transform:translateX(-9px)}50%{transform:translateX(9px)}}</style></helmet>
+<div style="position:relative;width:{{ px }};height:{{ px }}">
+<sc-if value="{{ aura }}"><div style="position:absolute;inset:-30%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,106,61,.32),rgba(255,106,61,.1) 55%,rgba(255,106,61,0));animation:{{ auraAnim }}"></div></sc-if>
+<sc-if value="{{ isCasco }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;left:12%;right:12%;bottom:-4%;height:22%;border-radius:50%;background:radial-gradient(closest-side,rgba(238,79,47,.42),rgba(238,79,47,0))"></div></sc-if>
+<div style="position:absolute;inset:0;animation:{{ floatAnim }};will-change:transform">
+<svg viewBox="{{ vb }}" style="position:absolute;inset:0;width:100%;height:100%;overflow:visible">
+<defs>
+<radialGradient id="{{ gA }}" cx="36%" cy="28%" r="80%"><stop offset="0" stop-color="#FFE7CF"></stop><stop offset=".28" stop-color="#FFA46A"></stop><stop offset=".62" stop-color="#F2562F"></stop><stop offset="1" stop-color="#A8260F"></stop></radialGradient>
+<linearGradient id="{{ gP }}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB27E"></stop><stop offset=".5" stop-color="#F2562F"></stop><stop offset="1" stop-color="#A8260F"></stop></linearGradient>
+<linearGradient id="{{ gV }}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1510"></stop><stop offset="1" stop-color="#050303"></stop></linearGradient>
+<radialGradient id="{{ gI }}" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".5" stop-color="#FFD8BC"></stop><stop offset="1" stop-color="#FF7A55"></stop></radialGradient>
+<filter id="{{ fG }}" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="1.8" result="b"></feGaussianBlur><feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+<clipPath id="{{ cV }}"><path d="M51 30 C63 29.5 71.5 38 72 50 C72.5 62 63 71 50 71 C37 71 28 64 28 53 C28 40 38 30.5 51 30 Z"></path></clipPath>
+<filter id="{{ fS }}" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#EE4F2F" flood-opacity=".45"></feDropShadow></filter>
+</defs>
+
+<sc-if value="{{ isCasco }}" hint-placeholder-val="{{ true }}">
+<g style="transform-box:view-box;transform-origin:50px 52px;animation:{{ cSway }}"><g style="transform-box:view-box;transform-origin:50px 52px;animation:{{ cHead }}"><g style="transform-box:view-box;transform-origin:50px 52px;animation:{{ cPlay }}">
+<g>
+<g style="animation:{{ cPlateL }}"><rect x="14" y="48" width="10" height="5" rx="1.5" fill="{{ uP }}"></rect><rect x="15" y="36" width="8" height="29" rx="4" fill="{{ uP }}"></rect><rect x="8.5" y="41" width="6" height="19" rx="3" fill="{{ uP }}"></rect><rect x="4" y="45.5" width="4.5" height="10" rx="2.2" fill="{{ uP }}"></rect><rect x="16.2" y="38" width="2" height="12" rx="1" fill="rgba(255,255,255,.55)"></rect></g>
+<g style="animation:{{ cPlateR }}"><rect x="76" y="48" width="10" height="5" rx="1.5" fill="{{ uP }}"></rect><rect x="77" y="36" width="8" height="29" rx="4" fill="{{ uP }}"></rect><rect x="85.5" y="41" width="6" height="19" rx="3" fill="{{ uP }}"></rect><rect x="91.5" y="45.5" width="4.5" height="10" rx="2.2" fill="{{ uP }}"></rect><rect x="78.2" y="38" width="2" height="12" rx="1" fill="rgba(255,255,255,.55)"></rect></g>
+<path d="M52 20 C68 19 79 32 80 48 C81 66 68 80 50 80 C32 80 20 70 20 54 C20 36 34 21 52 20 Z" fill="{{ uA }}"></path>
+<path d="M51 30 C63 29.5 71.5 38 72 50 C72.5 62 63 71 50 71 C37 71 28 64 28 53 C28 40 38 30.5 51 30 Z" fill="{{ uV }}"></path>
+<path d="M36 37 C41 32.5 48 31.5 55 32" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-linecap="round"></path>
+<ellipse cx="38" cy="27" rx="10" ry="4" fill="rgba(255,255,255,.55)" transform="rotate(-20 38 27)"></ellipse>
+</g>
+<g style="animation:{{ cEyes }}">
+<sc-if value="{{ eNormal }}" hint-placeholder-val="{{ true }}"><g style="transform-box:fill-box;transform-origin:center;animation:{{ cBlink }}"><rect x="41" y="43" width="6" height="14" rx="3" fill="#fff"></rect><rect x="54" y="43" width="6" height="14" rx="3" fill="#fff"></rect></g></sc-if>
+<sc-if value="{{ eStrain }}"><g style="transform-box:fill-box;transform-origin:center;animation:nbStrain 1.8s cubic-bezier(.45,0,.2,1) both"><rect x="41" y="43" width="6" height="14" rx="3" fill="#fff"></rect><rect x="54" y="43" width="6" height="14" rx="3" fill="#fff"></rect></g></sc-if>
+<sc-if value="{{ eWink }}"><rect x="41" y="43" width="6" height="14" rx="3" fill="#fff"></rect><g style="transform-box:fill-box;transform-origin:center;animation:nbWinkE 1.3s cubic-bezier(.45,0,.2,1) both"><rect x="54" y="43" width="6" height="14" rx="3" fill="#fff"></rect></g></sc-if>
+<sc-if value="{{ eHappy }}"><path d="M40 53 Q44 44.5 48 53 M53 53 Q57 44.5 61 53" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"></path></sc-if>
+<sc-if value="{{ listen }}"><rect x="37" y="43" width="4.5" height="14" rx="2.2" fill="#fff" style="transform-box:fill-box;transform-origin:center;animation:nbEq .7s cubic-bezier(.45,0,.2,1) infinite"></rect><rect x="44" y="43" width="4.5" height="14" rx="2.2" fill="#fff" style="transform-box:fill-box;transform-origin:center;animation:nbEq .7s .15s cubic-bezier(.45,0,.2,1) infinite"></rect><rect x="51" y="43" width="4.5" height="14" rx="2.2" fill="#fff" style="transform-box:fill-box;transform-origin:center;animation:nbEq .7s .3s cubic-bezier(.45,0,.2,1) infinite"></rect><rect x="58" y="43" width="4.5" height="14" rx="2.2" fill="#fff" style="transform-box:fill-box;transform-origin:center;animation:nbEq .7s .45s cubic-bezier(.45,0,.2,1) infinite"></rect></sc-if>
+<sc-if value="{{ think }}"><circle cx="41" cy="50" r="3" fill="#fff" style="animation:nbDot 1.1s cubic-bezier(.45,0,.2,1) infinite"></circle><circle cx="50.5" cy="50" r="3" fill="#fff" style="animation:nbDot 1.1s .18s cubic-bezier(.45,0,.2,1) infinite"></circle><circle cx="60" cy="50" r="3" fill="#fff" style="animation:nbDot 1.1s .36s cubic-bezier(.45,0,.2,1) infinite"></circle></sc-if>
+</g>
+</g></g></g>
+</sc-if>
+
+<sc-if value="{{ isPantalla }}">
+<g filter="{{ uS }}" style="animation:{{ bob }}">
+<path d="M50 20 V11" stroke="{{ uP }}" stroke-width="3.2" stroke-linecap="round"></path>
+<circle cx="50" cy="9" r="4.5" fill="{{ uI }}" filter="{{ uG }}" style="animation:nbAnt 1.6s ease-in-out infinite"></circle>
+<rect x="9" y="42" width="7" height="16" rx="3.5" fill="{{ uP }}"></rect><rect x="84" y="42" width="7" height="16" rx="3.5" fill="{{ uP }}"></rect>
+<rect x="14" y="19" width="72" height="64" rx="24" fill="{{ uA }}"></rect>
+<rect x="22" y="29" width="56" height="42" rx="15" fill="{{ uV }}"></rect>
+<path d="M28 35 C33 31.5 40 30.5 48 31" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2" stroke-linecap="round"></path>
+<ellipse cx="30" cy="24" rx="10" ry="3.2" fill="rgba(255,255,255,.55)" transform="rotate(-10 30 24)"></ellipse>
+<g filter="{{ uG }}" style="animation:{{ look }}">
+<sc-if value="{{ idle }}" hint-placeholder-val="{{ true }}"><g style="transform-box:fill-box;transform-origin:center;animation:nbBlink 5s infinite"><rect x="35" y="44" width="9" height="9" rx="2.2" fill="#fff"></rect><rect x="56" y="44" width="9" height="9" rx="2.2" fill="#fff"></rect></g><rect x="45" y="60" width="10" height="2.6" rx="1.3" fill="#FF9B75"></rect></sc-if>
+<sc-if value="{{ listen }}"><path d="M30 50 H36 L39 42 L44 58 L48 38 L52 62 L56 44 L60 55 L63 50 H70" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"></path></sc-if>
+<sc-if value="{{ think }}"><g style="transform-box:view-box;transform-origin:50px 50px;animation:nbSpin 1s linear infinite"><path d="M50 40 A10 10 0 0 1 60 50" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"></path></g><circle cx="50" cy="50" r="10" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="3.2"></circle></sc-if>
+</g>
+</g>
+</sc-if>
+
+<sc-if value="{{ isDron }}">
+<g filter="{{ uS }}" style="animation:{{ bob }}">
+<g style="transform-box:view-box;transform-origin:50px 52px;animation:nbOrbit 6s ease-in-out infinite">
+<path d="M8 52 A42 12 0 0 1 92 52" fill="none" stroke="{{ uP }}" stroke-width="4.5" stroke-linecap="round" opacity=".75"></path>
+</g>
+<circle cx="50" cy="52" r="30" fill="{{ uA }}"></circle>
+<ellipse cx="40" cy="33" rx="10" ry="4.5" fill="rgba(255,255,255,.55)" transform="rotate(-28 40 33)"></ellipse>
+<circle cx="50" cy="54" r="15" fill="{{ uV }}"></circle>
+<circle cx="50" cy="54" r="15" fill="none" stroke="rgba(255,236,222,.35)" stroke-width="1.4"></circle>
+<g style="transform-box:view-box;transform-origin:50px 52px;animation:nbOrbit 6s ease-in-out infinite">
+<path d="M92 52 A42 12 0 0 1 8 52" fill="none" stroke="{{ uP }}" stroke-width="4.5" stroke-linecap="round"></path>
+<circle cx="18" cy="60" r="3" fill="{{ uI }}" filter="{{ uG }}"></circle>
+</g>
+</g>
+<g filter="{{ uG }}" style="animation:{{ look }}">
+<sc-if value="{{ listen }}"><circle cx="50" cy="54" r="8" fill="none" stroke="#FFD8BC" stroke-width="1.5" style="transform-box:fill-box;transform-origin:center;animation:nbPulse 1.2s ease-out infinite"></circle></sc-if>
+<circle cx="50" cy="54" r="{{ irisR }}" fill="none" stroke="#FF9B75" stroke-width="2.4" stroke-dasharray="{{ irisDash }}" style="transform-box:fill-box;transform-origin:center;animation:{{ irisSpin }}"></circle>
+<circle cx="50" cy="54" r="{{ pupR }}" fill="{{ uI }}" style="transform-box:fill-box;transform-origin:center;animation:{{ blinkDron }}"></circle>
+</g>
+</sc-if>
+
+<sc-if value="{{ isBurbuja }}">
+<g filter="{{ uS }}" style="animation:{{ bob }}">
+<path d="M50 16 C73 16 90 30 90 49 C90 68 73 80 50 80 C45 80 40 79.4 36 78.2 L20 88 L23.5 72.5 C14.5 66 10 58 10 49 C10 30 27 16 50 16 Z" fill="{{ uA }}"></path>
+<rect x="21" y="34" width="58" height="30" rx="15" fill="{{ uV }}"></rect>
+<path d="M28 39.5 C33 36.5 40 35.8 46 36" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2" stroke-linecap="round"></path>
+<ellipse cx="34" cy="23" rx="11" ry="3.8" fill="rgba(255,255,255,.55)" transform="rotate(-14 34 23)"></ellipse>
+</g>
+<g filter="{{ uG }}" style="transform-box:fill-box;transform-origin:center;animation:{{ sparkle }}"><path d="M83 8 C84 13.5 85.5 15 91 16 C85.5 17 84 18.5 83 24 C82 18.5 80.5 17 75 16 C80.5 15 82 13.5 83 8 Z" fill="#FFE7CF"></path></g>
+<g filter="{{ uG }}" style="animation:{{ look }}">
+<sc-if value="{{ idle }}" hint-placeholder-val="{{ true }}"><g style="transform-box:fill-box;transform-origin:center;animation:nbBlink 5s infinite"><path d="M36 52 Q41 44 46 52 M54 52 Q59 44 64 52" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"></path></g></sc-if>
+<sc-if value="{{ listen }}"><circle cx="41" cy="49" r="4.6" fill="#fff"></circle><circle cx="59" cy="49" r="4.6" fill="#fff"></circle></sc-if>
+<sc-if value="{{ think }}"><rect x="39" y="47" width="22" height="4" rx="2" fill="rgba(255,255,255,.25)"></rect><rect x="45.5" y="47" width="9" height="4" rx="2" fill="#fff" style="animation:nbScan 1.2s ease-in-out infinite"></rect></sc-if>
+</g>
+</sc-if>
+
+</svg>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:200,&quot;height&quot;:200},&quot;kind&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;casco&quot;,&quot;pantalla&quot;,&quot;dron&quot;,&quot;burbuja&quot;],&quot;default&quot;:&quot;casco&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;idle&quot;,&quot;listen&quot;,&quot;think&quot;],&quot;default&quot;:&quot;idle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:128,&quot;min&quot;:16,&quot;max&quot;:400,&quot;tsType&quot;:&quot;number&quot;},&quot;aura&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;float&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const NB_PLAYS = [['lift', 1800], ['happy', 1500], ['wink', 1300], ['peek', 2200], ['spin', 1100]];
+const NB = window.__nbSync || (window.__nbSync = (() => {
+  const S = { epoch: performance.now(), subs: new Set(), play: null, last: null, t: 0 };
+  const reduced = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+  const eligible = () => [...S.subs].filter(c => c.canPlay());
+  S.sched = (first) => { clearTimeout(S.t); S.t = setTimeout(S.fire, (first ? 2500 : 7000) + Math.random() * 7000); };
+  S.fire = () => {
+    const el = eligible(); if (!el.length || document.hidden || reduced()) return S.sched();
+    let pick; do { pick = NB_PLAYS[Math.floor(Math.random() * NB_PLAYS.length)]; } while (pick[0] === S.last);
+    if (pick[0] === 'spin' && Math.random() < .6) pick = NB_PLAYS[1];
+    S.last = pick[0]; S.play = pick[0]; S.until = performance.now() + pick[1];
+    el.forEach(c => c.setState({ play: pick[0] }));
+    setTimeout(() => { S.play = null; S.subs.forEach(c => c.state.play && c.setState({ play: null })); S.sched(); }, pick[1]);
+  };
+  S.add = c => { S.subs.add(c); if (!S.t) S.sched(true); };
+  S.del = c => { S.subs.delete(c); if (!S.subs.size) { clearTimeout(S.t); S.t = 0; } };
+  return S;
+})());
+class Component extends DCLogic {
+  uid = Math.random().toString(36).slice(2, 8);
+  state = { play: null };
+  dl = {};
+  componentDidMount() { NB.add(this); }
+  componentWillUnmount() { NB.del(this); }
+  canPlay() { const p = this.props; return (p.kind || 'casco') === 'casco' && (p.state || 'idle') === 'idle' && p.play !== false && (p.size ?? 128) >= 24; }
+  componentDidUpdate(pp) { if (pp.state !== this.props.state && this.state.play) this.setState({ play: null }); }
+  // Animación continua en fase con el reloj compartido: todos los Nova se mueven juntos.
+  a(slot, name, T, rest) { let c = this.dl[slot]; if (!c || c.n !== name) c = this.dl[slot] = { n: name, d: -(((performance.now() - NB.epoch) / 1000) % T) }; return name + ' ' + T + 's ' + rest.replace('$D', c.d.toFixed(3) + 's'); }
+  renderVals() {
+    const p = this.props, size = p.size ?? 128, k = p.kind || 'casco', st = p.state || 'idle', u = this.uid;
+    const idle = st === 'idle', listen = st === 'listen', think = st === 'think';
+    const id = n => 'nb' + n + u, url = n => 'url(#nb' + n + u + ')';
+    const pl = idle ? this.state.play : null, E = 'cubic-bezier(.45,0,.2,1)';
+    return {
+      cSway: idle ? this.a('sw', 'nbSway', 9, 'ease-in-out $D infinite') : think ? this.a('sw', 'nbCock', 2.4, 'ease-in-out $D infinite') : 'none',
+      cHead: listen ? this.a('hd', 'nbNod', .7, E + ' $D infinite') : this.a('hd', 'nbBreath', 4.2, 'ease-in-out $D infinite'),
+      cPlay: pl === 'happy' ? 'nbHop 1.5s ' + E + ' both' : pl === 'wink' ? 'nbWinkH 1.3s ' + E + ' both' : pl === 'peek' ? 'nbPeekH 2.2s ' + E + ' both' : pl === 'spin' ? 'nbSpinP 1.1s cubic-bezier(.6,-0.2,.3,1.25) both' : pl === 'lift' ? 'nbShake .18s linear 10' : 'none',
+      cPlateL: pl === 'lift' ? 'nbLift 1.8s ' + E + ' both' : listen ? this.a('pl', 'nbPlate', .7, E + ' $D infinite') : this.a('pl', 'nbLag', 4.2, 'ease-in-out $D infinite'),
+      cPlateR: pl === 'lift' ? 'nbLift 1.8s .06s ' + E + ' both' : listen ? this.a('pr', 'nbPlateR', .7, E + ' $D infinite') : this.a('pr', 'nbLag', 4.2, 'ease-in-out $D infinite').replace(/(-?[\d.]+)s infinite$/, (m, d) => (+d - .1).toFixed(3) + 's infinite'),
+      cEyes: pl === 'peek' ? 'nbPeek 2.2s ' + E + ' both' : idle && !pl ? this.a('ey', 'nbLook2', 9, E + ' $D infinite') : think ? this.a('ey', 'nbEyeUp', 2.4, 'ease-in-out $D infinite') : 'none',
+      cBlink: idle && !pl ? this.a('bl', 'nbBlink2', 6.5, 'linear $D infinite') : 'none',
+      eNormal: idle && (!pl || pl === 'peek' || pl === 'spin'), eStrain: pl === 'lift', eWink: pl === 'wink', eHappy: pl === 'happy',
+      cV: id('cV'), uC: url('cV'),
+      vb: k === 'casco' ? '3 12 94 76' : '0 0 100 100', px: size + 'px', aura: !!p.aura, floatAnim: p.float ? this.a('fl', 'nbFloat', 5, 'ease-in-out $D infinite') : 'none', auraAnim: this.a('au', 'nbAura', 4.5, 'ease-in-out $D infinite'),
+      isCasco: k === 'casco', isPantalla: k === 'pantalla', isDron: k === 'dron', isBurbuja: k === 'burbuja',
+      idle, listen, think,
+      gA: id('gA'), gP: id('gP'), gV: id('gV'), gI: id('gI'), fG: id('fG'), fS: id('fS'),
+      uA: url('gA'), uP: url('gP'), uV: url('gV'), uI: url('gI'), uG: url('fG'), uS: url('fS'),
+      look: idle ? 'nbLook 7s ease-in-out infinite' : 'none',
+      bob: listen ? 'nbBob .8s ease-in-out infinite' : 'none',
+      plateL: listen ? 'nbPlate .7s ease-in-out infinite' : 'none', plateR: listen ? 'nbPlateR .7s ease-in-out infinite' : 'none',
+      irisR: listen ? 10 : 8, irisDash: think ? '8 5' : 'none', irisSpin: think ? 'nbSpin 1.4s linear infinite' : 'none',
+      pupR: listen ? 5.5 : think ? 3.2 : 4.4, blinkDron: idle ? 'nbBlink 5s infinite' : 'none',
+      sparkle: think ? 'nbSpin 2s linear infinite' : 'nbTwinkle 2.6s ease-in-out infinite'
+    };
+  }
+}
+</script>
+</body>
+</html>

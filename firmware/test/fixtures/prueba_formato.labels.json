@@ -1,0 +1,6 @@
+{
+  "source": "sintetico-por-telefono",
+  "nota": "Senal generada, NO una serie real. Existe solo para probar que la cadena app -> .vbt -> replay -> metrics funciona con origen 2.",
+  "reps": [],
+  "expected_rep_count": 3
+}

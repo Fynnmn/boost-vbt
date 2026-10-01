@@ -1,0 +1,127 @@
+/* ============================================================
+   log.css — sólo para log.html
+
+   Hereda todo de app.css. Acá va nada más que lo propio de la pantalla de
+   descarga del log, que es herramienta interna y no el producto.
+   ============================================================ */
+
+.log__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+.log__head h2 { margin: 0; }
+
+.btn--chico {
+  width: auto;
+  flex: 0 0 auto;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+  gap: 0.4rem;
+}
+
+.note--libre {
+  margin: 0 0 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.vacio {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--fg-3);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* --- Una sesión ---------------------------------------------- */
+
+.ses {
+  padding: 1rem;
+  margin-bottom: 0.7rem;
+  border-radius: var(--r-card);
+  background: var(--surf);
+  border: 1px solid var(--hair);
+  box-shadow: var(--sombra-card), var(--luz-borde);
+}
+/* Una sesión que quedó abierta se cortó la energía en el medio. No se puede
+   bajar, y tiene que verse distinta de un vistazo: si pareciera normal, uno
+   la intentaría bajar una y otra vez sin entender por qué falla. */
+.ses--abierta { border-left: 2px solid var(--amber); opacity: 0.75; }
+
+.ses__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.ses__ej { font-size: 1rem; font-weight: 700; }
+.ses__kg {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+
+.ses__meta {
+  margin: 0.45rem 0 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  color: var(--fg-3);
+  line-height: 1.7;
+}
+
+.ses__aviso {
+  margin: 0 0 0.9rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--amber);
+}
+
+.ses__acciones { display: flex; gap: 0.6rem; }
+.ses__acciones .btn { margin: 0; }
+
+/* --- Progreso ------------------------------------------------ */
+
+/* Un volcado son megabytes por BLE: tarda minutos. Sin una barra que se mueva,
+   la pantalla parece colgada y uno corta la descarga a la mitad. */
+.prog { margin-top: 0.4rem; }
+.prog__pista {
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.07);
+  overflow: hidden;
+}
+.prog__barra {
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: var(--coral);
+  transition: width 0.2s linear;
+}
+.prog__txt {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fg-3);
+}
+
+.btn--peligro {
+  border-color: rgb(238 69 38 / 0.4);
+  color: var(--coral-hi);
+}
+.btn--peligro:active { background: rgb(238 69 38 / 0.1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .prog__barra { transition: none; }
+}
+
+/* Una descarga incompleta dejaba la barra coral y casi llena, que de un
+   vistazo se lee igual que una terminada bien — justo el error que esta
+   pantalla existe para evitar. El color lo desmiente antes de leer el texto. */
+.prog--mal .prog__barra { background: var(--amber); }
+.prog--mal .prog__txt { color: var(--amber); }

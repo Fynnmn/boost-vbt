@@ -1,0 +1,170 @@
+/* ============================================================
+   ajustes.css — sólo para ajustes.html
+
+   Hereda todo de app.css. Acá va nada más que lo propio de la pantalla de
+   ajustes, que es herramienta interna y no el producto.
+
+   La restricción que manda el diseño: se usa en el gimnasio, de pie, con una
+   mano y entre series. Por eso los botones son grandes, el valor se lee de
+   lejos y la ayuda está siempre visible en vez de escondida detrás de un
+   toque más.
+   ============================================================ */
+
+.ajustes__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+.ajustes__head h2 { margin: 0; }
+
+.btn--chico {
+  width: auto;
+  flex: 0 0 auto;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+  gap: 0.4rem;
+}
+
+/* --- Aviso de cambios sin aplicar --------------------------- */
+
+.pendiente {
+  margin: 0 0 1.1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: rgb(242 176 30 / 0.09);
+  border: 1px solid rgb(242 176 30 / 0.28);
+  color: var(--fg-2);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* --- Grupos -------------------------------------------------- */
+
+.grupo { margin-bottom: 2rem; }
+.grupo__h {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.grupo__intro {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+
+/* --- Una fila de ajuste -------------------------------------- */
+
+.aj {
+  padding: 1rem;
+  margin-bottom: 0.7rem;
+  border-radius: var(--r-card);
+  background: var(--surf);
+  border: 1px solid var(--hair);
+  box-shadow: var(--sombra-card), var(--luz-borde);
+}
+/* Los que pueden dejar el sensor sin contar repeticiones llevan una marca
+   permanente. Un cartel de confirmación se aprende a ignorar en dos días;
+   una franja al costado se sigue viendo al sexto mes. */
+.aj--critico { border-left: 2px solid var(--coral); }
+.aj--fijo { opacity: 0.62; }
+
+.aj__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.15rem;
+}
+.aj__label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.aj__rango {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+.aj__ayuda {
+  margin: 0.3rem 0 0.9rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+
+.aj__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+/* El valor medido va en mono, igual que en el resto de la app: son datos,
+   no cifras elegidas. */
+.aj__valor {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.aj__unidad {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--fg-3);
+}
+.aj__valor--sucio { color: var(--amber); }
+.aj__valor--desconocido { color: var(--fg-3); }
+
+.aj__pasos { display: flex; gap: 0.55rem; }
+.aj__step {
+  width: 46px; height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--hair);
+  background: rgb(255 255 255 / 0.04);
+  color: var(--fg);
+  cursor: pointer;
+  transition: transform 0.12s var(--ease), background 0.15s var(--ease);
+}
+.aj__step:active { transform: scale(0.92); background: rgb(255 255 255 / 0.09); }
+.aj__step:disabled { opacity: 0.3; cursor: default; }
+.aj__step:disabled:active { transform: none; }
+
+.aj__fijo {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--fg-3);
+  letter-spacing: 0.08em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aj__step, .aj__step:active { transition: none; transform: none; }
+}
+
+/* Mientras se leen los 22 parámetros, los que todavía no llegaron laten
+   despacio. Sin esto la pantalla es una lista de guiones quietos, que se lee
+   como que la app se colgó y no como que está trabajando.
+
+   Sólo se anima la opacidad de los que faltan: los que ya llegaron quedan
+   firmes, y así el latido además muestra el avance. */
+.cargando .aj__valor--desconocido { animation: leyendo 1.1s var(--ease) infinite; }
+
+@keyframes leyendo {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cargando .aj__valor--desconocido { animation: none; }
+}

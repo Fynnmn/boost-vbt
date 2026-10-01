@@ -1,0 +1,21 @@
+.pio/
+build/
+*.o
+*.elf
+*.hex
+*.uf2
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Las grabaciones crudas son pesadas y no van a git.
+# Las etiquetas SI van: son trabajo manual y son lo que hace reproducible la metrica.
+dataset/raw/**/*.bin
+dataset/raw/**/*.csv
+!dataset/raw/**/*.json
+
+# Calibracion por unidad: cada placa tiene la suya.
+docs/CALIBRATION.local.md

@@ -1,0 +1,24 @@
+{
+  "name": "boost-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Biblioteca de componentes de la app BOOST (VBT). Fuente unica del sistema visual: fondo hueso, vidrio, coral para el dato que decide.",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "storybook": "echo \"sin storybook: el kit se compila con vite build\""
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.7"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}

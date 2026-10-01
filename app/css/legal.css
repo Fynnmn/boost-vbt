@@ -1,0 +1,123 @@
+/* ============================================================
+   legal.css — sólo para legal.html
+
+   Hereda todos los tokens y la identidad de app.css; acá va nada más
+   que lo propio de un documento largo de leer. La app es una interfaz
+   que se mira dos segundos; esto es texto que alguien lee sentado, así
+   que la medida de línea y el interlineado mandan sobre la densidad.
+   ============================================================ */
+
+.legaldoc main {
+  padding-top: 1.75rem;
+  padding-bottom: 4rem;
+  /* Un poco más ancho que la app: 520px de columna con texto corrido
+     deja renglones demasiado cortos y la lectura se entrecorta. */
+  max-width: 640px;
+}
+
+.legaldoc h1 { margin-bottom: 0.6rem; }
+
+.doc__date {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--fg-3);
+  margin: 0 0 2rem;
+}
+
+/* --- Índice ------------------------------------------------- */
+
+.doc__toc {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 3rem;
+  border-top: 1px solid var(--hair-soft);
+}
+.doc__toc a {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--hair-soft);
+  color: var(--fg-2);
+  font-size: 0.95rem;
+  transition: color 0.15s;
+}
+.doc__toc a:hover { color: var(--coral); }
+
+/* --- Cuerpo ------------------------------------------------- */
+
+.legaldoc section { margin-bottom: 3.25rem; scroll-margin-top: 80px; }
+
+.legaldoc h2 {
+  font-size: clamp(1.35rem, 5.5vw, 1.7rem);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--hair);
+}
+
+.legaldoc h3 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.02rem;
+  margin: 2rem 0 0.6rem;
+  color: var(--fg);
+}
+
+.legaldoc p {
+  margin: 0 0 1rem;
+  color: var(--fg-2);
+  line-height: 1.65;
+}
+.legaldoc p b { color: var(--fg); font-weight: 600; }
+
+.legaldoc ul { margin: 0 0 1rem; padding-left: 1.1rem; color: var(--fg-2); line-height: 1.65; }
+.legaldoc li { margin-bottom: 0.4rem; }
+
+/* El coral es para los enlaces DEL TEXTO. La barra de arriba no entra:
+   ahí el wordmark tiene que quedar blanco con el punto coral, como en
+   toda la marca, y el botón de volver es un control, no un enlace de
+   lectura. */
+.legaldoc main a { color: var(--coral); text-decoration: none; }
+.legaldoc main a:hover { text-decoration: underline; }
+.legaldoc .doc__back { color: var(--fg-2); }
+.legaldoc .doc__back:hover { color: var(--fg); text-decoration: none; }
+
+/* --- Bloques destacados ------------------------------------- */
+
+/* Coral para lo que puede lastimarte, gris para lo informativo. Que
+   todos los avisos griten igual es lo mismo que ninguno grite. */
+.doc__alert {
+  padding: 1.1rem 1.2rem;
+  margin: 0 0 1.5rem;
+  border-left: 3px solid var(--coral);
+  background: rgb(238 69 38 / 0.07);
+  border-radius: 0 12px 12px 0;
+}
+.doc__alert p:last-child { margin-bottom: 0; }
+
+.doc__alert--info {
+  border-left-color: var(--amber);
+  background: rgb(242 176 30 / 0.05);
+}
+
+.doc__note {
+  padding: 1.1rem 1.2rem;
+  margin: 0 0 1.5rem;
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  background: var(--bg-1);
+}
+.doc__note p:last-child { margin-bottom: 0; }
+
+.doc__mail {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+}
+
+.doc__foot {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hair-soft);
+  font-size: 0.82rem;
+  color: var(--fg-3);
+}
+
+.doc__back { max-width: 320px; margin-top: 2rem; }

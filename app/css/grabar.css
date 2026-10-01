@@ -1,0 +1,96 @@
+/* ============================================================
+   grabar.css — sólo para grabar.html
+
+   Hereda todo de app.css. Acá va nada más que lo propio de la pantalla
+   de grabación, que es una herramienta interna y no el producto.
+   ============================================================ */
+
+.panel { display: flex; flex-direction: column; min-height: calc(100dvh - var(--topbar-h) - var(--safe-t) - 1.5rem); }
+
+.loadcard { margin-top: 1rem; }
+
+/* --- Grabando ----------------------------------------------- */
+
+.rec__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  color: var(--coral-hi);
+}
+.rec__dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 12px rgb(238 69 38 / 0.9);
+  animation: latido 1.4s var(--ease) infinite;
+}
+
+.rec__hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+}
+/* El cronómetro en cifras tabulares: sin eso el ancho salta en cada
+   segundo y el número parece temblar. */
+.rec__time {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(4.5rem, 26vw, 7rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.rec__sub {
+  margin-top: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--fg-2);
+}
+
+/* --- Repeticiones reales ------------------------------------ */
+
+.reps {
+  margin-top: 1.25rem;
+  padding: 1.1rem 1rem;
+  border-radius: var(--r-card);
+  background: rgb(238 69 38 / 0.07);
+  border: 1px solid rgb(238 69 38 / 0.24);
+}
+.reps__h {
+  margin: 0 0 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+.reps__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+.reps__row .load__num {
+  width: 2.4ch;
+  font-size: clamp(2.8rem, 13vw, 3.4rem);
+}
+.reps .note { text-align: center; max-width: 32ch; margin-inline: auto; }
+
+.nota {
+  width: 100%;
+  margin-top: 0.9rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 0.035);
+  color: var(--fg);
+  font-size: 0.88rem;
+}
+.nota::placeholder { color: var(--fg-3); }
+.nota:focus { outline: none; border-color: var(--coral); }
+
+h2 { margin-bottom: 1.1rem; }

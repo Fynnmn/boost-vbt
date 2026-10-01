@@ -1,0 +1,5 @@
+# Copiar a .dev.vars para `npm run dev` contra los emuladores (npm run emu en backend/).
+FIREBASE_EMULATOR=1
+FIREBASE_PROJECT_ID=demo-boost
+FAKE_PLAN=pro
+ANTHROPIC_API_KEY=sk-ant-...

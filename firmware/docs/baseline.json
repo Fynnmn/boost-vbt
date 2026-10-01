@@ -1,0 +1,79 @@
+{
+  "precision": 1.0,
+  "total_esperadas": 19,
+  "error_conteo": 0,
+  "fp_negativas": 0,
+  "mae_vel": 0.08865666666666668,
+  "archivos": {
+    "neg_apoyada.vbt": {
+      "archivo": "dataset/raw/synth\\neg_apoyada.vbt",
+      "esperadas": 0,
+      "detectadas": 0,
+      "falsos_pos": 0,
+      "falsos_neg": 0,
+      "negativa": true,
+      "mae_vel": null,
+      "n_vel": 0
+    },
+    "neg_bolso.vbt": {
+      "archivo": "dataset/raw/synth\\neg_bolso.vbt",
+      "esperadas": 0,
+      "detectadas": 0,
+      "falsos_pos": 0,
+      "falsos_neg": 0,
+      "negativa": true,
+      "mae_vel": null,
+      "n_vel": 0
+    },
+    "neg_caminar.vbt": {
+      "archivo": "dataset/raw/synth\\neg_caminar.vbt",
+      "esperadas": 0,
+      "detectadas": 0,
+      "falsos_pos": 0,
+      "falsos_neg": 0,
+      "negativa": true,
+      "mae_vel": null,
+      "n_vel": 0
+    },
+    "neg_rack.vbt": {
+      "archivo": "dataset/raw/synth\\neg_rack.vbt",
+      "esperadas": 0,
+      "detectadas": 0,
+      "falsos_pos": 0,
+      "falsos_neg": 0,
+      "negativa": true,
+      "mae_vel": null,
+      "n_vel": 0
+    },
+    "set_ligero.vbt": {
+      "archivo": "dataset/raw/synth\\set_ligero.vbt",
+      "esperadas": 8,
+      "detectadas": 8,
+      "falsos_pos": 5,
+      "falsos_neg": 5,
+      "negativa": false,
+      "mae_vel": 0.033900000000000007,
+      "n_vel": 3
+    },
+    "set_medio.vbt": {
+      "archivo": "dataset/raw/synth\\set_medio.vbt",
+      "esperadas": 6,
+      "detectadas": 6,
+      "falsos_pos": 2,
+      "falsos_neg": 2,
+      "negativa": false,
+      "mae_vel": 0.09975000000000003,
+      "n_vel": 4
+    },
+    "set_pesado.vbt": {
+      "archivo": "dataset/raw/synth\\set_pesado.vbt",
+      "esperadas": 5,
+      "detectadas": 5,
+      "falsos_pos": 0,
+      "falsos_neg": 0,
+      "negativa": false,
+      "mae_vel": 0.13232,
+      "n_vel": 5
+    }
+  }
+}

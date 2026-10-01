@@ -1,0 +1,37 @@
+{
+  "source": "synthetic",
+  "fps": null,
+  "reps": [
+    {
+      "conc_start_ms": 3630,
+      "conc_end_ms": 4399,
+      "kinovea_mean_vel_ms": 0.5196,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 7798,
+      "conc_end_ms": 8716,
+      "kinovea_mean_vel_ms": 0.4465,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 12183,
+      "conc_end_ms": 13221,
+      "kinovea_mean_vel_ms": 0.3974,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 16721,
+      "conc_end_ms": 18861,
+      "kinovea_mean_vel_ms": 0.1897,
+      "grinder": true
+    },
+    {
+      "conc_start_ms": 21976,
+      "conc_end_ms": 24495,
+      "kinovea_mean_vel_ms": 0.1597,
+      "grinder": true
+    }
+  ],
+  "expected_rep_count": 5
+}

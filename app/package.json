@@ -1,0 +1,9 @@
+{
+  "name": "boost-app",
+  "private": true,
+  "type": "module",
+  "description": "App del sensor BOOST. Sin dependencias y sin paso de build: se edita, se recarga y se sube.",
+  "scripts": {
+    "test": "node test/test.mjs"
+  }
+}

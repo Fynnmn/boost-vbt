@@ -1,0 +1,43 @@
+{
+  "source": "synthetic",
+  "fps": null,
+  "reps": [
+    {
+      "conc_start_ms": 3630,
+      "conc_end_ms": 4139,
+      "kinovea_mean_vel_ms": 0.7989,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 7538,
+      "conc_end_ms": 8120,
+      "kinovea_mean_vel_ms": 0.724,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 11587,
+      "conc_end_ms": 12207,
+      "kinovea_mean_vel_ms": 0.6795,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 15707,
+      "conc_end_ms": 16385,
+      "kinovea_mean_vel_ms": 0.6156,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 19500,
+      "conc_end_ms": 20255,
+      "kinovea_mean_vel_ms": 0.5466,
+      "grinder": false
+    },
+    {
+      "conc_start_ms": 23510,
+      "conc_end_ms": 24346,
+      "kinovea_mean_vel_ms": 0.4988,
+      "grinder": false
+    }
+  ],
+  "expected_rep_count": 6
+}

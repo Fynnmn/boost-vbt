@@ -1,0 +1,16 @@
+{
+  "appId": "app.boost.velo",
+  "appName": "BOOST",
+  "webDir": "www",
+  "backgroundColor": "#F1EFEC",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false,
+    "backgroundColor": "#F1EFEC"
+  },
+  "plugins": {
+    "Keyboard": { "resize": "native" },
+    "StatusBar": { "style": "LIGHT", "overlaysWebView": true },
+    "SplashScreen": { "launchShowDuration": 600, "backgroundColor": "#F1EFEC", "showSpinner": false }
+  }
+}

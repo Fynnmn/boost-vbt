@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BOOST — Ajustes del sensor</title>
+<meta name="theme-color" content="#070707">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ajustes">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/ajustes.css">
+</head>
+
+<body>
+<div class="ambiente" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="./" aria-label="BOOST">
+    <img src="assets/simbolo.png" width="320" height="210" alt="" aria-hidden="true">
+    <span>BOOST<i>.</i></span>
+  </a>
+  <span class="chip" id="chipEstado">Sin conectar</span>
+</header>
+
+<main>
+
+<!-- Sin sensor no hay nada que ajustar: los valores viven en el sensor, no
+     en el teléfono. -->
+<div class="panel" id="panel-conectar">
+  <p class="eyebrow">Herramienta interna</p>
+  <h1>Ajustes<br>del sensor</h1>
+  <p class="lead">Los umbrales viven en el sensor y se cambian por Bluetooth.
+    Sirve para calibrar en el gimnasio, con la barra en la mano, sin volver
+    a la computadora ni recompilar nada.</p>
+
+  <p class="warn" id="soporteNota" hidden></p>
+
+  <div class="spacer"></div>
+
+  <button class="btn btn--primary btn--big" id="btnConnect" type="button">
+    <span id="icoBt"></span><span>Conectar el sensor</span>
+  </button>
+  <button class="btn btn--ghost" id="btnSim" type="button">Usar el simulador</button>
+  <p class="note">El simulador acepta y rechaza exactamente lo mismo que el
+    sensor, así que sirve para recorrer la pantalla, no para calibrar.</p>
+</div>
+
+<!-- Los ajustes -->
+<div class="panel" id="panel-ajustes" hidden>
+  <div class="ajustes__head">
+    <div>
+      <p class="eyebrow">Ajustes</p>
+      <h2 id="nombreSensor">—</h2>
+    </div>
+    <button class="btn btn--ghost btn--chico" id="btnRecargar" type="button">
+      <span id="icoRecargar"></span><span>Releer</span>
+    </button>
+  </div>
+
+  <!-- Se muestra cuando hay cambios escritos que el chip todavía no aplicó. -->
+  <p class="pendiente" id="avisoPendiente" hidden>
+    Hay cambios guardados que el sensor todavía no aplicó al hardware. Se
+    aplican solos la próxima vez que cambie de modo (al dormirse o despertar).
+  </p>
+
+  <div id="grupos"></div>
+
+  <div class="spacer"></div>
+
+  <button class="btn btn--ghost" id="btnDefaults" type="button">
+    Restaurar valores de fábrica
+  </button>
+  <button class="btn btn--ghost" id="btnDesconectar" type="button">Desconectar</button>
+</div>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="js/ajustes.js"></script>
+</body>
+</html>

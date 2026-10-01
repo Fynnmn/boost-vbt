@@ -1,0 +1,54 @@
+# Servidor de la app BOOST. Deploy: npm run deploy (cuenta de Cloudflare de Máximo).
+name = "boost-api"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Dominio propio (getboost.fit ya está en Cloudflare). Se activa al hacer el primer deploy.
+routes = [{ pattern = "api.getboost.fit", custom_domain = true }]
+
+[vars]
+FIREBASE_PROJECT_ID = "boost-vbt-app"
+NOVA_MODEL = "claude-opus-5"
+NOVA_EFFORT = "medium"
+# Si Google lo retira o está saturado, Nova prueba solo con los otros Flash.
+GEMINI_MODEL = "gemini-3.6-flash"
+# Mientras no haya RevenueCat, Nova abierta a todos los que tengan cuenta (tope diario de Pro).
+NOVA_BETA = "1"
+# Respaldo gratis en Cloudflare cuando Gemini tarda: Gemma 4 acertó las reglas de carga
+# (Llama 3.3 es más rápido pero se equivocaba). Arranca si Gemini no contestó en HEDGE_MS.
+CF_AI_MODEL = "@cf/google/gemma-4-26b-a4b-it"
+HEDGE_MS = "3000"
+# Freno global: mensajes a Nova por día para TODO BOOST. Pasado esto, Nova contesta
+# "mucha demanda" sin llamar a la IA. Subirlo a medida que crezcan los usuarios
+# (ver docs/COSTOS-2026-09-27.md). Gemini: como mucho 4 llamadas por pregunta.
+NOVA_GLOBAL_DAILY = "20000"
+GEMINI_MAX_CALLS = "4"
+# App Check (prueba de que el pedido sale de la app oficial). Número del proyecto de Firebase.
+FIREBASE_PROJECT_NUMBER = "227856547235"
+# "1" = rechaza pedidos sin App Check. Prender cuando la app de iPhone tenga App Attest
+# (hace falta la cuenta de Apple Developer); antes dejaría afuera a los iPhone.
+APPCHECK_ENFORCE = "0"
+
+# IA de Cloudflare (gratis, cuota diaria): respaldo de Nova cuando Gemini está saturado.
+[ai]
+binding = "AI"
+
+# Anti bots (gratis): cortan ráfagas antes de tocar Firestore o la IA.
+# El tope diario de mensajes (40 Pro, 120 Élite) vive en Firestore, nova/{uid}.
+[[ratelimits]]
+name = "RL_IP"
+namespace_id = "1001"
+simple = { limit = 30, period = 60 }
+
+[[ratelimits]]
+name = "RL_USER"
+namespace_id = "1002"
+simple = { limit = 8, period = 60 }
+
+# Secretos (NO van en este archivo), con: npx wrangler secret put NOMBRE
+#   GROQ_API_KEY              clave de console.groq.com (gratis, sin tarjeta). Nova la usa primero: ~1 s
+#   GEMINI_API_KEY            clave de Google AI Studio (gratis). Respaldo de Groq
+#   ANTHROPIC_API_KEY         clave de la API de Claude (opcional, paga)
+#   FIREBASE_SERVICE_ACCOUNT  el JSON entero de la cuenta de servicio de boost-app
+#   REVENUECAT_SECRET         clave secreta de RevenueCat (sk_...)

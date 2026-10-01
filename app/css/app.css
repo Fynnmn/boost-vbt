@@ -1,0 +1,1082 @@
+/* ============================================================
+   BOOST — app del sensor
+
+   El diseño viene del canvas aprobado (docs/DISENO.md, y el canvas de
+   Claude Design). Dirección: premium con capas.
+
+   LAS CINCO REGLAS QUE MANDAN
+
+   1. Oscuro fijo, sin modo claro. Se mira en un gimnasio con luz
+      artificial fuerte; el negro con un solo acento es lo que menos
+      cansa la vista y lo que deja ganar al dato sin competencia.
+
+   2. Nada es plano. Cada superficie declara a qué altura está:
+      degradado de arriba abajo, una línea de luz en el borde superior
+      y una sombra proyectada. Es lo que separa "negro con cajas" de
+      "objeto con planos".
+
+   3. DOS TIPOGRAFÍAS CON UNA REGLA CLARA. Los números que el usuario
+      lee como resultado van en Archivo Black con cifras tabulares:
+      ancho fijo al actualizarse, pero peso de titular. La
+      monoespaciada queda para etiquetas, ejes y datos chicos, que es
+      donde comunica "instrumento" en vez de "terminal".
+      (La versión anterior tenía el número gigante en monoespaciada y
+      se leía como una consola.)
+
+   4. El hueco se llena con información, no con aire. Si una pantalla
+      tiene 200px vacíos, es que le falta un dato que el usuario iba a
+      buscar a otra pantalla.
+
+   5. Todo lo que se toca mide 56px o más y es una píldora.
+
+   SOBRE LAS ANIMACIONES: ninguna dura más de 420 ms y ninguna retrasa
+   una lectura. Se mueven las cosas que entran, no las que el usuario
+   está tratando de leer. Todas caen bajo `prefers-reduced-motion`.
+   ============================================================ */
+
+:root {
+  --bg: #070707;
+  --bg-1: #121212;
+  --bg-2: #1a1a1a;
+  --fg: #ffffff;
+  --fg-2: rgb(255 255 255 / 0.60);
+  --fg-3: rgb(255 255 255 / 0.36);
+
+  --coral: #EE4526;
+  --coral-hi: #FF5C3B;
+  --coral-lo: #D93A1D;
+  --green: #35C77A;
+  --amber: #F2B01E;
+
+  --hair: rgb(255 255 255 / 0.10);
+  --hair-soft: rgb(255 255 255 / 0.06);
+
+  /* Superficies. Un degradado, no un color: es lo que hace que una
+     tarjeta parezca tener un borde superior iluminado. */
+  --surf: linear-gradient(180deg, #191919 0%, #101010 100%);
+  --surf-alto: linear-gradient(180deg, #202020 0%, #141414 100%);
+  --luz-borde: inset 0 1px 0 rgb(255 255 255 / 0.07);
+  --sombra-card: 0 20px 40px -22px rgb(0 0 0 / 0.95);
+  --sombra-boton: 0 12px 30px -8px rgb(238 69 38 / 0.55);
+
+  /* El peso 900 en la pila NO es redundante: Archivo Black tiene un solo
+     peso y lo ignora, pero si la hoja de Google Fonts no llega —red caída,
+     bloqueador, el servicio con problemas— el navegador cae a la fuente del
+     sistema, y sin el 900 los números gigantes se dibujarían finitos y todo
+     el diseño se vendría abajo. Con el peso declarado, el peor caso es una
+     tipografía distinta, no una pantalla rota. */
+  --font-display: "Archivo Black", "Archivo", system-ui, sans-serif;
+  --font-body: "Archivo", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --gutter: clamp(1.15rem, 5vw, 1.35rem);
+  --r-card: 20px;
+  --r-pill: 999px;
+
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+
+  --tabs-h: 64px;
+  --topbar-h: 58px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.30, 1);
+  --ease-pop: cubic-bezier(0.2, 1.35, 0.4, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: clip;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+img, svg { display: block; max-width: 100%; }
+button, input { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+.ico { flex: none; }
+.ico path, .ico rect, .ico circle { vector-effect: non-scaling-stroke; }
+
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding-bottom: calc(var(--tabs-h) + var(--safe-b) + 1.5rem);
+  padding-left: max(var(--gutter), var(--safe-l));
+  padding-right: max(var(--gutter), var(--safe-r));
+}
+
+/* ============================================================
+   CAPA DE FONDO
+   El halo detrás del contenido es lo que saca a la app del negro
+   liso. Es un solo elemento fijo, sin coste de repintado.
+   ============================================================ */
+
+.ambiente {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 42% at 50% 26%, rgb(238 69 38 / 0.13), rgb(238 69 38 / 0) 68%),
+    radial-gradient(120% 80% at 50% 30%, rgb(0 0 0 / 0) 42%, rgb(0 0 0 / 0.55) 100%);
+  transition: opacity 0.5s var(--ease);
+}
+/* Durante la serie el halo sube de intensidad: la pantalla entera
+   acompaña al número en vez de quedarse quieta detrás. */
+body[data-live="1"] .ambiente {
+  background:
+    radial-gradient(62% 44% at 50% 34%, rgb(238 69 38 / 0.22), rgb(238 69 38 / 0) 70%),
+    radial-gradient(120% 80% at 50% 30%, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.6) 100%);
+}
+
+/* ============================================================
+   BARRA SUPERIOR
+   ============================================================ */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: calc(var(--topbar-h) + var(--safe-t));
+  padding-top: var(--safe-t);
+  max-width: 520px;
+  margin: 0 auto;
+  padding-left: max(var(--gutter), var(--safe-l));
+  padding-right: max(var(--gutter), var(--safe-r));
+  background: linear-gradient(180deg, rgb(18 18 18 / 0.92), rgb(7 7 7 / 0.72));
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.005em;
+}
+.brand img { width: 32px; height: auto; flex: none; }
+.brand i { color: var(--coral); font-style: normal; }
+
+/* --- Chips -------------------------------------------------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 36px;
+  padding: 0 0.85rem;
+  border: 1px solid var(--hair);
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.05);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--fg-2);
+  white-space: nowrap;
+}
+.chip--device {
+  cursor: pointer;
+  background: var(--surf-alto);
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow: var(--luz-borde);
+  transition: border-color 0.18s var(--ease);
+}
+.chip--device:hover { border-color: rgb(255 255 255 / 0.2); }
+.chip--state { color: var(--fg); border-color: var(--fg-3); }
+
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--fg-3);
+  flex: none;
+  transition: background 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.dot.is-on   { background: var(--green); box-shadow: 0 0 8px rgb(53 199 122 / 0.85); }
+.dot.is-live { background: var(--coral); box-shadow: 0 0 9px rgb(238 69 38 / 0.9); animation: latido 1.4s var(--ease) infinite; }
+.dot.is-sim  { background: var(--amber); box-shadow: 0 0 8px rgb(242 176 30 / 0.8); }
+
+@keyframes latido {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.82); }
+}
+
+.batt { font-size: 0.72rem; color: var(--fg-3); }
+
+.iconbtn {
+  display: grid;
+  place-items: center;
+  width: 36px; height: 36px;
+  border: 1px solid var(--hair);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: color 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+.iconbtn:hover { color: var(--fg); border-color: var(--fg-3); }
+
+/* ============================================================
+   TIPOGRAFÍA
+   ============================================================ */
+
+.panel { padding-top: 1.5rem; }
+
+h1, h2 { font-family: var(--font-display); font-weight: 900; line-height: 1.05; margin: 0 0 0.7rem; letter-spacing: -0.02em; }
+h1 { font-size: clamp(1.85rem, 8vw, 2.35rem); }
+h2 { font-size: clamp(1.5rem, 6.5vw, 2rem); }
+
+.view__title { padding-top: 1.4rem; margin-bottom: 1rem; }
+
+.lead { color: var(--fg-2); margin: 0; font-size: 0.98rem; line-height: 1.55; max-width: 32ch; }
+.note { color: var(--fg-3); font-size: 0.78rem; margin: 0.85rem 0 0; line-height: 1.5; }
+.note--calib { text-align: center; max-width: 34ch; margin-inline: auto; }
+.hint { display: none; }
+
+.eyebrow, .stat__l, .zonetable__h {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.eyebrow { color: var(--coral); margin: 0 0 0.5rem; }
+
+/* ============================================================
+   BOTONES
+   ============================================================ */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 58px;
+  padding: 0 1.4rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.045);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.12s var(--ease), filter 0.18s var(--ease),
+              border-color 0.18s var(--ease), color 0.18s var(--ease);
+}
+.btn:active { transform: scale(0.975); }
+.btn + .btn { margin-top: 0.7rem; }
+
+/* El primario lleva las tres capas: degradado, luz arriba y sombra
+   coloreada debajo. Es lo que lo despega de la pantalla. */
+.btn--primary {
+  background: linear-gradient(180deg, var(--coral-hi) 0%, var(--coral-lo) 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.32), var(--sombra-boton);
+  color: #fff;
+  font-weight: 700;
+}
+.btn--primary:hover { filter: brightness(1.07); }
+
+.btn--ghost { border-color: var(--hair); color: var(--fg-2); background: transparent; }
+.btn--ghost:hover { border-color: var(--fg-3); color: var(--fg); }
+
+.btn--outline-accent { background: transparent; border-color: rgb(238 69 38 / 0.5); color: var(--coral-hi); }
+.btn--outline-accent:hover { background: rgb(238 69 38 / 0.1); }
+
+.btn--stop { background: rgb(255 255 255 / 0.045); border-color: var(--hair); color: var(--fg); box-shadow: var(--luz-borde); }
+.btn--stop:hover { border-color: var(--coral); color: var(--coral-hi); }
+
+.btn--big { min-height: 62px; font-size: 1.05rem; }
+.btn--sm { min-height: 40px; font-size: 0.8rem; width: auto; padding: 0 1rem; gap: 0.4rem; }
+.btn--danger:hover { border-color: var(--coral); color: var(--coral-hi); }
+.btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+.row { display: flex; gap: 0.7rem; margin-top: 1.4rem; }
+.row .btn { margin-top: 0; }
+.row--end { justify-content: flex-end; margin-top: 2.2rem; }
+.row .btn--outline-accent { flex: 1; }
+.row .btn--primary { flex: 1.5; }
+
+:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
+
+/* ============================================================
+   ENTRADA DE PANTALLA
+   Cada panel entra con un desplazamiento corto. Es lo que hace que
+   pasar de una pantalla a otra se sienta como un movimiento y no
+   como un corte de película.
+   ============================================================ */
+
+.panel:not([hidden]) { animation: entra 0.34s var(--ease) both; }
+
+@keyframes entra {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   CONECTAR
+   ============================================================ */
+
+.panel--connect,
+.panel--setup {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--topbar-h) - var(--safe-t) - var(--tabs-h) - var(--safe-b) - 1.5rem);
+}
+
+.pair {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: clamp(190px, 33vh, 262px);
+  margin: 0 0 1.75rem;
+}
+.pair__dev {
+  position: relative;
+  z-index: 1;
+  width: min(58%, 218px);
+  height: auto;
+  filter: drop-shadow(0 24px 38px rgb(0 0 0 / 0.95));
+  animation: flotar 5.5s ease-in-out infinite;
+}
+/* Flotación mínima: 5px en cinco segundos y medio. Lo justo para que
+   el objeto se sienta vivo; más que eso marea. */
+@keyframes flotar {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+/* El reflejo bajo el sensor lo apoya en algo en vez de dejarlo
+   flotando en el vacío. */
+.pair::after {
+  content: "";
+  position: absolute;
+  bottom: 14%;
+  width: 190px; height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(238 69 38 / 0.22), rgb(238 69 38 / 0) 70%);
+  filter: blur(6px);
+}
+
+.pair__rings { position: absolute; inset: 0; display: grid; place-items: center; }
+.pair__rings i {
+  position: absolute;
+  width: 116px; height: 116px;
+  border: 1.5px solid var(--coral);
+  border-radius: 50%;
+  opacity: 0;
+  animation: onda 3.6s var(--ease) infinite;
+}
+.pair__rings i:nth-child(2) { animation-delay: 0.72s; }
+.pair__rings i:nth-child(3) { animation-delay: 1.44s; }
+.pair__rings i:nth-child(4) { animation-delay: 2.16s; }
+.pair__rings i:nth-child(5) { animation-delay: 2.88s; }
+
+@keyframes onda {
+  0%   { transform: scale(0.7); opacity: 0.75; }
+  100% { transform: scale(3.2); opacity: 0; }
+}
+
+/* ============================================================
+   ANTES DE LA SERIE
+   ============================================================ */
+
+.spacer { flex: 1; min-height: 0.5rem; }
+
+.exercises {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(var(--gutter) * -1) 1.25rem;
+  padding: 0 var(--gutter) 0.25rem;
+}
+.exercises::-webkit-scrollbar { display: none; }
+
+.exercises button {
+  flex: none;
+  min-height: 46px;
+  padding: 0 1.15rem;
+  border: 1px solid var(--hair-soft);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--fg-3);
+  font-size: 0.92rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease),
+              background 0.2s var(--ease), transform 0.12s var(--ease);
+}
+.exercises button:active { transform: scale(0.96); }
+.exercises button[aria-checked="true"] {
+  color: var(--fg);
+  border-color: rgb(255 255 255 / 0.22);
+  background: var(--surf-alto);
+  box-shadow: var(--luz-borde);
+}
+
+.exercises--sm { margin-bottom: 1.1rem; }
+.exercises--sm button {
+  min-height: 38px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* --- El dial de carga --------------------------------------- */
+
+/* Pieza sólida, no un número suelto entre dos círculos. */
+.loadcard {
+  padding: 1.25rem 1.1rem 1rem;
+  border-radius: 24px;
+  background: var(--surf-alto);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  box-shadow: var(--luz-borde), 0 24px 48px -26px rgb(0 0 0 / 0.95);
+}
+.loadcard__h {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  color: var(--fg-3);
+  text-align: center;
+  margin: 0 0 0.85rem;
+}
+
+.load { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+
+.load__step {
+  flex: none;
+  width: 56px; height: 56px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.10);
+  border-radius: 50%;
+  background: var(--surf-alto);
+  box-shadow: var(--luz-borde);
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: transform 0.12s var(--ease-pop), color 0.18s var(--ease), border-color 0.18s var(--ease);
+}
+.load__step:hover { color: var(--fg); border-color: rgb(255 255 255 / 0.22); }
+.load__step:active { transform: scale(0.9); }
+
+.load__value { flex: 1; display: flex; align-items: flex-start; justify-content: center; gap: 0.3rem; }
+.load__num {
+  width: 2ch;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3.4rem, 16vw, 4.3rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  padding: 0;
+  transition: color 0.2s var(--ease);
+}
+.load__num:focus { outline: none; color: var(--coral-hi); }
+.load__num.is-bump { animation: bump 0.24s var(--ease-pop); }
+@keyframes bump {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.055); }
+  100% { transform: scale(1); }
+}
+
+.load__unit {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--fg-3);
+  font-size: 1rem;
+  margin-top: 1.15em;
+}
+
+/* --- La regla ------------------------------------------------ */
+
+.rulerwrap { position: relative; margin-top: 0.85rem; }
+
+.ruler {
+  height: 58px;
+  margin: 0 -1.1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+}
+.ruler::-webkit-scrollbar { display: none; }
+
+.ruler__track {
+  position: relative;
+  height: 100%;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.28) 0 1px, transparent 1px 10px) 0 10px / 100% 15px no-repeat,
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.5) 0 1.5px, transparent 1.5px 100px) 0 4px / 100% 27px no-repeat;
+}
+.ruler__track b {
+  position: absolute;
+  bottom: 6px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.66rem;
+  color: var(--fg-3);
+  pointer-events: none;
+}
+.ruler__needle {
+  position: absolute;
+  top: 0; bottom: 22px; left: 50%;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--coral);
+  border-radius: 2px;
+  box-shadow: 0 0 14px rgb(238 69 38 / 0.85);
+  pointer-events: none;
+}
+
+/* --- Lo que llena el hueco: la lectura del perfil ------------ */
+
+.predict {
+  margin-top: 0.85rem;
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+  background: rgb(238 69 38 / 0.07);
+  border: 1px solid rgb(238 69 38 / 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  animation: entra 0.34s var(--ease) both;
+}
+.predict__l { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.18em; color: var(--fg-3); }
+.predict__v { display: flex; align-items: baseline; gap: 0.35rem; margin-top: 0.3rem; }
+.predict__v b { font-family: var(--font-display);
+  font-weight: 900; font-size: 1.6rem; line-height: 1; color: var(--coral-hi); font-variant-numeric: tabular-nums; }
+.predict__v span { font-family: var(--font-mono); font-size: 0.72rem; color: var(--fg-3); }
+.predict__z { text-align: right; }
+.predict__z div:last-child { font-size: 0.9rem; font-weight: 600; margin-top: 0.35rem; }
+
+.lastset {
+  margin-top: 0.6rem;
+  padding: 0.8rem 1rem;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.035);
+  border: 1px solid var(--hair-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--fg-2);
+}
+.lastset b { font-family: var(--font-mono); font-weight: 400; color: var(--fg); }
+
+/* ============================================================
+   EN VIVO
+   ============================================================ */
+
+.panel--live {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--topbar-h) - var(--safe-t) - var(--safe-b) - 1.5rem);
+}
+
+.live__chips { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+.live__chips .chip--load { font-family: var(--font-body); }
+.live__chips .chip--load b { font-family: var(--font-display); font-weight: 400; font-size: 0.88rem; color: var(--fg); }
+
+.live__hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+.live__num { display: flex; flex-direction: column; align-items: center; }
+
+.repidx {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  color: var(--fg-3);
+  margin-bottom: 0.4rem;
+}
+
+/* EL NÚMERO. Archivo Black con cifras tabulares: no baila al
+   actualizarse, pero tiene peso de titular. El degradado sutil y el
+   resplandor coral son lo que lo despegan del fondo. */
+.bignum {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(6.5rem, 36vw, 9.5rem);
+  line-height: 0.84;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, #ffffff 32%, #cfc9c7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 12px 44px rgb(238 69 38 / 0.28);
+}
+/* La animación no toca la opacidad y no baja de 0.94 de escala: los
+   navegadores congelan las animaciones en pestañas de segundo plano, y
+   con un primer frame transparente el número quedaría medio invisible
+   hasta la repetición siguiente. */
+.bignum.is-new { animation: pop 0.42s var(--ease-pop); }
+@keyframes pop {
+  0%   { transform: scale(0.94); }
+  100% { transform: scale(1); }
+}
+
+.numline { display: flex; align-items: center; gap: 0.65rem; margin-top: 0.9rem; }
+.numline__u { font-family: var(--font-mono); font-size: 0.85rem; color: var(--fg-3); }
+.numline__sep { width: 1px; height: 14px; background: rgb(255 255 255 / 0.16); }
+
+.zone {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 0.75rem;
+  border-radius: var(--r-pill);
+  background: rgb(238 69 38 / 0.16);
+  border: 1px solid rgb(238 69 38 / 0.34);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #FF8064;
+  transition: background 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+.zone:empty { display: none; }
+
+/* --- Estado de espera --------------------------------------- */
+
+.waiting { text-align: center; }
+.waiting__pulse { position: relative; display: grid; place-items: center; height: 92px; margin-bottom: 1.5rem; }
+.waiting__pulse i {
+  position: absolute;
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--coral);
+  border-radius: 50%;
+  opacity: 0;
+  animation: onda 2.2s var(--ease) infinite;
+}
+.waiting__pulse i:nth-child(2) { animation-delay: 1.1s; }
+.waiting__title { margin: 0; font-family: var(--font-display);
+  font-weight: 900; font-size: clamp(1.6rem, 7vw, 2.05rem); letter-spacing: -0.02em; }
+.waiting__sub { margin: 0.55rem auto 0; max-width: 25ch; color: var(--fg-2); font-size: 0.92rem; line-height: 1.5; }
+
+/* --- Tarjeta de la serie ------------------------------------- */
+
+.setcard {
+  padding: 1rem 1rem 0.9rem;
+  border-radius: var(--r-card);
+  background: var(--surf);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: var(--luz-borde), var(--sombra-card);
+  margin-bottom: 1rem;
+}
+
+.bars { display: flex; align-items: flex-end; gap: 5px; height: 74px; }
+.bars i {
+  flex: 1 1 0;
+  min-width: 5px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.42), rgb(255 255 255 / 0.14));
+  transform-origin: bottom;
+  animation: crece 0.42s var(--ease) both;
+}
+/* Cada barra entra creciendo desde la base. Con `transform` y no con
+   `height`, que es lo que la mantiene a 60fps. */
+@keyframes crece {
+  from { transform: scaleY(0); opacity: 0; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+.bars i.is-last {
+  background: linear-gradient(180deg, #FF6A45, var(--coral-lo));
+  box-shadow: 0 0 18px rgb(238 69 38 / 0.55);
+}
+.bars i.is-bad { background: repeating-linear-gradient(45deg, var(--amber) 0 3px, transparent 3px 7px); }
+/* Los huecos de las repeticiones que faltan: dan escala al gráfico. */
+.bars i.is-ghost {
+  background: repeating-linear-gradient(180deg, rgb(255 255 255 / 0.05) 0 3px, transparent 3px 7px);
+  border-radius: 4px;
+  animation: none;
+}
+
+.setcard__sep { height: 1px; background: rgb(255 255 255 / 0.08); margin: 0.9rem 0 0.8rem; }
+
+.minigrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.minigrid__v { font-family: var(--font-display);
+  font-weight: 900; font-size: 1.3rem; line-height: 1; font-variant-numeric: tabular-nums; transition: color 0.3s var(--ease); }
+.minigrid__l { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.16em; color: var(--fg-3); margin-top: 0.3rem; }
+
+.warn {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.8rem 0.95rem;
+  margin: 0 0 1rem;
+  border-left: 2px solid var(--amber);
+  background: rgb(242 176 30 / 0.05);
+  border-radius: 0 12px 12px 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--fg-2);
+  animation: entra 0.3s var(--ease) both;
+}
+.warn .ico { color: var(--amber); margin-top: 1px; }
+.warn--install b { color: var(--fg); font-weight: 600; }
+
+/* ============================================================
+   RESUMEN
+   ============================================================ */
+
+.sum__head { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.sum__head b { font-family: var(--font-display); font-weight: 900; font-size: clamp(2rem, 9vw, 2.5rem); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.sum__head span { font-size: 1.02rem; font-weight: 600; color: var(--fg-2); }
+.sum__head i { width: 5px; height: 5px; border-radius: 50%; background: rgb(255 255 255 / 0.24); align-self: center; }
+
+.chartbox {
+  padding: 1rem 0.9rem 0.7rem;
+  border-radius: 22px;
+  background: var(--surf);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  box-shadow: var(--luz-borde), var(--sombra-card);
+  margin-bottom: 0.9rem;
+}
+.chart { width: 100%; height: 168px; overflow: visible; }
+/* La curva se dibuja sola de izquierda a derecha. Es la única
+   animación larga de la app y se la gana: es el momento de premio. */
+.chart .traza {
+  stroke-dasharray: var(--largo, 600);
+  stroke-dashoffset: var(--largo, 600);
+  animation: trazar 0.85s var(--ease) 0.1s forwards;
+}
+@keyframes trazar { to { stroke-dashoffset: 0; } }
+.chart .punto { opacity: 0; animation: aparece 0.3s var(--ease) both; }
+.chart .relleno { opacity: 0; animation: aparece 0.6s var(--ease) 0.35s both; }
+@keyframes aparece { to { opacity: 1; } }
+
+.chart__labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--fg-3);
+}
+
+/* La pérdida no es una celda más: es la métrica que decide qué hacer
+   en la próxima serie, así que tiene su propio bloque y su color. */
+.stats { display: flex; gap: 0.6rem; }
+.stat--key {
+  flex: 1.25;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgb(242 176 30 / 0.16), rgb(242 176 30 / 0.04));
+  border: 1px solid rgb(242 176 30 / 0.34);
+}
+.stat--key.is-alto { background: linear-gradient(160deg, rgb(238 69 38 / 0.18), rgb(238 69 38 / 0.04)); border-color: rgb(238 69 38 / 0.38); }
+.stat--key.is-bajo { background: linear-gradient(160deg, rgb(53 199 122 / 0.14), rgb(53 199 122 / 0.03)); border-color: rgb(53 199 122 / 0.32); }
+.stat--key .stat__v { font-family: var(--font-display);
+  font-weight: 900; font-size: 2.2rem; line-height: 1; color: var(--amber); font-variant-numeric: tabular-nums; }
+.stat--key.is-alto .stat__v { color: var(--coral-hi); }
+.stat--key.is-bajo .stat__v { color: var(--green); }
+
+.stats__col { flex: 1; display: flex; flex-direction: column; gap: 0.6rem; }
+.stat {
+  flex: 1;
+  padding: 0.6rem 0.85rem;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--hair-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.stat .stat__v { font-family: var(--font-display);
+  font-weight: 900; font-size: 1.15rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat__l { display: block; margin-top: 0.28rem; }
+
+.verdict {
+  position: relative;
+  margin: 0.9rem 0 0;
+  padding: 0.85rem 1rem 0.85rem 1.1rem;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.035);
+  border: 1px solid var(--hair-soft);
+  color: var(--fg-2);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.verdict::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.85rem; bottom: 0.85rem;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--coral);
+}
+.verdict b { color: var(--fg); font-weight: 700; }
+
+.mount { margin: 1.2rem 0 0; }
+.mount img { width: 100%; border-radius: var(--r-card); filter: brightness(0.88) contrast(0.96); }
+.mount figcaption { margin-top: 0.6rem; font-size: 0.8rem; line-height: 1.5; color: var(--fg-3); }
+
+/* ============================================================
+   HISTORIAL
+   ============================================================ */
+
+.heatcard {
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+  background: var(--surf);
+  border: 1px solid var(--hair-soft);
+  margin-bottom: 1rem;
+}
+.heatcard__head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 0.7rem; }
+.heatcard__head span:last-child { font-size: 0.82rem; color: var(--fg-2); }
+.heatcard__head b { color: var(--fg); font-weight: 700; }
+
+.heatmap { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 1fr); gap: 3px; overflow: hidden; }
+.heatmap i { aspect-ratio: 1; border-radius: 2px; background: rgb(255 255 255 / 0.05); }
+.heatmap i[data-l="1"] { background: rgb(238 69 38 / 0.35); }
+.heatmap i[data-l="2"] { background: rgb(238 69 38 / 0.68); }
+.heatmap i[data-l="3"] { background: var(--coral); }
+
+/* Cada sesión es una tarjeta, no una fila suelta. */
+.session {
+  border-radius: var(--r-card);
+  background: rgb(255 255 255 / 0.028);
+  border: 1px solid var(--hair-soft);
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+.session:first-of-type { background: var(--surf); border-color: rgb(255 255 255 / 0.08); box-shadow: var(--luz-borde), 0 18px 36px -22px rgb(0 0 0 / 0.9); }
+
+.session__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--hair-soft);
+}
+.session__date { font-weight: 700; font-size: 0.98rem; display: flex; align-items: center; gap: 0.5rem; }
+.session__date .pip { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 8px rgb(238 69 38 / 0.8); }
+.session__meta { font-family: var(--font-mono); font-size: 0.68rem; color: var(--fg-3); text-align: right; }
+
+.setrow {
+  display: grid;
+  grid-template-columns: 1fr auto 56px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.04);
+}
+.setrow:last-child { border-bottom: 0; }
+.setrow__name { font-size: 0.9rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.setrow__sub { font-family: var(--font-mono); font-size: 0.72rem; color: var(--fg-3); margin-top: 0.15rem; }
+.setrow__loss { font-family: var(--font-mono); font-size: 0.8rem; color: var(--fg-2); }
+.setrow__loss.is-alto { color: var(--amber); }
+.spark { height: 24px; }
+
+.empty { padding: 3rem 0; text-align: center; color: var(--fg-3); max-width: 32ch; margin-inline: auto; }
+
+/* ============================================================
+   PERFIL
+   ============================================================ */
+
+.prof__card {
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--surf-alto);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  box-shadow: var(--luz-borde), 0 24px 48px -26px rgb(0 0 0 / 0.95);
+  margin-bottom: 1.5rem;
+}
+/* La franja de acento le da jerarquía a la tarjeta sin agregar ni un
+   elemento más. */
+.prof__card::before {
+  content: "";
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--coral), rgb(238 69 38 / 0.15));
+}
+.prof__body { padding: 1.1rem; }
+
+.prof__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.9rem; }
+.prof__1rm { display: flex; align-items: baseline; gap: 0.35rem; font-family: var(--font-display);
+  font-weight: 900; font-size: clamp(3rem, 14vw, 3.9rem); line-height: 0.92; letter-spacing: -0.045em; font-variant-numeric: tabular-nums; }
+.prof__1rm span { font-size: 0.32em; color: var(--fg-3); letter-spacing: 0; font-weight: 700; }
+
+.prof__meta { display: flex; gap: 1rem; margin-top: 0.85rem; padding-top: 0.8rem; border-top: 1px solid rgb(255 255 255 / 0.07); font-family: var(--font-mono); font-size: 0.68rem; color: var(--fg-3); flex-wrap: wrap; }
+.prof__meta b { color: rgb(255 255 255 / 0.78); font-weight: 500; }
+
+.conf {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 28px;
+  padding: 0 0.7rem;
+  border: 1px solid currentColor;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.conf .pip { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.conf--alta  { color: var(--green); background: rgb(53 199 122 / 0.10); }
+.conf--media { color: var(--amber); background: rgb(242 176 30 / 0.10); }
+.conf--baja  { color: var(--coral-hi); background: rgb(238 69 38 / 0.10); }
+
+.scatter { width: 100%; height: 200px; overflow: visible; margin-top: 0.9rem; }
+.scatter .recta { stroke-dasharray: var(--largo, 400); stroke-dashoffset: var(--largo, 400); animation: trazar 0.9s var(--ease) 0.15s forwards; }
+/* Los puntos del perfil no van a opacidad 1: cada uno tiene la suya
+   según cuán reciente es la serie, y esa gradación es información. */
+.scatter .punto { opacity: 0; animation-duration: 0.35s; animation-timing-function: var(--ease); animation-fill-mode: both; }
+@keyframes apareceOp { to { opacity: var(--op, 1); } }
+.axis { font-family: var(--font-mono); font-size: 0.62rem; fill: var(--fg-3); }
+
+.zonetable__h { display: block; margin-bottom: 0.25rem; }
+.zonerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--hair-soft);
+  font-size: 0.92rem;
+}
+.zonerow span { color: var(--fg-2); }
+.zonerow b { font-family: var(--font-mono); font-weight: 400; font-size: 0.82rem; }
+
+.legal {
+  margin: 2.2rem 0 1.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hair-soft);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+.legal b { color: var(--fg-2); font-weight: 600; }
+.legal a { color: var(--fg-2); text-decoration: underline; text-underline-offset: 3px; }
+.legal a:hover { color: var(--coral-hi); }
+
+/* ============================================================
+   NAVEGACIÓN
+   ============================================================ */
+
+.tabs {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 520px;
+  margin: 0 auto;
+  padding-bottom: var(--safe-b);
+  background: rgb(10 10 10 / 0.92);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--hair-soft);
+}
+.tabs button {
+  height: var(--tabs-h);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  border: 0;
+  background: transparent;
+  color: var(--fg-3);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s var(--ease);
+}
+.tabs button .ico { transition: transform 0.24s var(--ease-pop); }
+.tabs button.is-on { color: var(--fg); }
+.tabs button.is-on .ico { transform: translateY(-1px) scale(1.06); color: var(--coral); }
+.tabs button.is-on::after {
+  content: "";
+  position: absolute;
+  top: 7px; left: 50%;
+  transform: translateX(-50%);
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 8px rgb(238 69 38 / 0.8);
+  animation: aparece 0.3s var(--ease) both;
+}
+
+body[data-live="1"] .tabs { display: none; }
+body[data-live="1"] main { padding-bottom: 1.5rem; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabs-h) + var(--safe-b) + 1rem);
+  transform: translateX(-50%);
+  z-index: 40;
+  max-width: min(420px, calc(100vw - 2rem));
+  padding: 0.8rem 1.1rem;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: var(--surf-alto);
+  box-shadow: var(--luz-borde), 0 14px 44px rgb(0 0 0 / 0.65);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  animation: sube 0.3s var(--ease) both;
+}
+@keyframes sube {
+  from { opacity: 0; transform: translate(-50%, 12px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ============================================================
+   MOVIMIENTO REDUCIDO
+   Se apaga todo lo decorativo. Lo que informa —el color de la
+   pérdida, el estado del punto— se queda.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .pair__rings i, .waiting__pulse i { opacity: 0.16; }
+  .pair__rings i:nth-child(2) { transform: scale(1.7); }
+  .pair__rings i:nth-child(3) { transform: scale(2.4); }
+  .pair__rings i:nth-child(4) { transform: scale(3.1); }
+  .pair__rings i:nth-child(5) { opacity: 0; }
+  .chart .traza, .scatter .recta { stroke-dashoffset: 0; }
+  .chart .punto, .chart .relleno, .scatter .punto { opacity: 1; }
+}

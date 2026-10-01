@@ -1,0 +1,107 @@
+rules_version = '2';
+
+// Reglas de la app BOOST (proyecto boost-app).
+// Principio: cada atleta ve y toca SOLO lo suyo. El servidor (Worker) entra
+// con la cuenta de servicio y no pasa por estas reglas.
+// Se prueban con: npm test (en backend/, contra el emulador).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+
+    // Perfil del onboarding. Lista cerrada de campos: nadie puede meterse
+    // un "plan: 'elite'" a mano; la suscripción la decide RevenueCat.
+    function validProfile(d) {
+      return d.keys().hasOnly(['name', 'role', 'bw', 'hgt', 'age', 'goals', 'level',
+                               'exs', 'custom', 'loads', 'week', 'unit', 'remind', 'updatedAt',
+                               'consentV', 'aiConsentV', 'routine', 'routines'])
+        // Versión de los términos aceptados y del permiso para la IA (src/velo/legal.js).
+        && (!('consentV' in d) || (d.consentV is string && d.consentV.size() <= 20))
+        && (!('aiConsentV' in d) || (d.aiConsentV is string && d.aiConsentV.size() <= 20))
+        // Rutina que armó Nova: { focus, season, days, weeks, sport }.
+        // Rutina de Nova v2 (src/velo/routine.js): las respuestas del formulario, la fecha de
+        // inicio y la explicación de Nova. Campos cerrados y con tope de tamaño.
+        && (!('routine' in d) || d.routine == null || (d.routine is map
+            && d.routine.keys().hasOnly(['v', 'mode', 'focus', 'pos', 'season', 'match', 'field', 'days', 'mins', 'prio', 'inj', 'eq', 'weeks', 'start', 'why', 'sport', 'id', 'name', 'kind', 'plan'])
+            && (!('name' in d.routine) || (d.routine.name is string && d.routine.name.size() <= 40))
+            && (!('plan' in d.routine) || (d.routine.plan is list && d.routine.plan.size() <= 7))
+            && (!('why' in d.routine) || (d.routine.why is string && d.routine.why.size() <= 600))
+            && (!('inj' in d.routine) || (d.routine.inj is list && d.routine.inj.size() <= 8))
+            && (!('focus' in d.routine) || (d.routine.focus is string && d.routine.focus.size() <= 20))))
+        // Rutinas guardadas (Entrenar › Tus rutinas): hasta 8.
+        && (!('routines' in d) || (d.routines is list && d.routines.size() <= 8))
+        && (!('name' in d) || (d.name is string && d.name.size() <= 60))
+        && (!('role' in d) || d.role in ['atleta', 'coach'])
+        && (!('bw' in d) || (d.bw is number && d.bw > 20 && d.bw < 400))
+        && (!('hgt' in d) || (d.hgt is number && d.hgt >= 50 && d.hgt <= 260))
+        && (!('age' in d) || (d.age is number && d.age >= 10 && d.age <= 110))
+        && (!('goals' in d) || (d.goals is list && d.goals.size() <= 10))
+        && (!('exs' in d) || (d.exs is list && d.exs.size() <= 60))
+        && (!('custom' in d) || (d.custom is list && d.custom.size() <= 60))
+        && (!('loads' in d) || (d.loads is map && d.loads.size() <= 60))
+        && (!('week' in d) || (d.week is list && d.week.size() <= 7))
+        && (!('level' in d) || d.level in ['base', 'inter', 'adv'])
+        && (!('unit' in d) || d.unit in ['kg', 'lb'])
+        && (!('remind' in d) || d.remind is bool)
+        && (!('updatedAt' in d) || d.updatedAt == request.time);
+    }
+
+    // Una serie medida. Las series no se editan: se crean o se borran.
+    function validSet(d, id) {
+      return d.keys().hasOnly(['id', 'exercise', 'load', 'setNo', 'reps', 'at'])
+        && d.id == id
+        && d.exercise is string && d.exercise.size() <= 80
+        && d.load is number && d.load >= 0 && d.load <= 1000
+        && d.setNo is int && d.setNo >= 1 && d.setNo <= 50
+        && d.reps is list && d.reps.size() <= 60
+        && d.at is int;
+    }
+
+    match /users/{uid} {
+      allow read, delete: if owner(uid);
+      allow create, update: if owner(uid) && validProfile(request.resource.data);
+
+      match /sets/{setId} {
+        allow read, delete: if owner(uid);
+        allow create: if owner(uid) && validSet(request.resource.data, setId);
+        // Reintento offline de la misma serie: mismo contenido, se acepta.
+        allow update: if owner(uid) && validSet(request.resource.data, setId)
+                      && request.resource.data == resource.data;
+      }
+    }
+
+    // Email confirmado (Apple y Google ya lo confirman ellos).
+    function verified() {
+      return request.auth.token.email_verified == true
+        || request.auth.token.firebase.sign_in_provider in ['apple.com', 'google.com'];
+    }
+
+    // "Escribinos": se crea y nada más. Se lee desde la consola.
+    // Anti spam: el id es {uid}_{día}_{1..3}, así que cada cuenta manda como mucho
+    // 3 por día (el día se cuenta en UTC; se acepta también el anterior por si el
+    // reloj del teléfono está corrido). El email, si va, es el de la cuenta.
+    function supportId(id) {
+      let day = int(request.time.toMillis() / 86400000);
+      return id.matches(request.auth.uid + '_(' + string(day) + '|' + string(day - 1) + ')_[1-3]');
+    }
+    match /support/{id} {
+      allow create: if signedIn() && verified() && supportId(id)
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'topic', 'message', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && (!('email' in request.resource.data) || request.resource.data.email == request.auth.token.email)
+        && (!('topic' in request.resource.data) || (request.resource.data.topic is string && request.resource.data.topic.size() <= 100))
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 10
+        && request.resource.data.message.size() <= 5000
+        && request.resource.data.createdAt == request.time;
+    }
+
+    // nova/{uid} (contador y conversación de Nova): solo el servidor. Lo cierra la regla de abajo.
+
+    // Todo lo demás, cerrado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+/* Solo en la app (html.velo-native). Saca el marco del teléfono de mentira y
+   escala la pantalla de 390 px al ancho real del iPhone, sin cambiar proporciones. */
+html.velo-native, html.velo-native body { margin: 0 !important; padding: 0 !important; height: 100%; overflow: hidden; background: #F1EFEC; overscroll-behavior: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-text-size-adjust: 100%; }
+html.velo-native input, html.velo-native textarea { -webkit-user-select: text; user-select: text; }
+/* Posición absoluta y zoom (no fixed + transform): en Safari de iPhone, el scroll dentro
+   de un elemento transformado adentro de uno fixed puede no responder al dedo. */
+html.velo-native [data-velo="shell"] { position: absolute !important; inset: 0 !important; width: auto !important; height: auto !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; overflow: hidden !important; }
+html.velo-native [data-velo="screen"] { width: 390px !important; height: var(--velo-h, 844px) !important; border-radius: 0 !important; transform: none !important; zoom: var(--velo-s, 1); }
+html.velo-native [data-velo="statusbar"], html.velo-native [data-velo="homebar"] { display: none !important; }
+/* Cada pantalla del diseño es una caja de alto fijo (844 px en el prototipo). En un
+   teléfono más bajo, o en Safari con sus barras (~660 px), lo que no entraba quedaba
+   cortado sin forma de llegar: Inicio, Progreso, Perfil, Bienvenida, Resumen, Premium.
+   Esa caja ahora se desliza cuando su contenido no entra; si entra, no cambia nada. */
+html.velo-native [data-velo="screen"] div[style*="inset: 0px"][style*="flex-direction: column"] { overflow-y: auto !important; overflow-x: hidden !important; overscroll-behavior: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+html.velo-native [data-velo="screen"] div[style*="inset: 0px"][style*="flex-direction: column"]::-webkit-scrollbar { display: none; }
+
+/* Web: sin botón de Apple (ver index.js). Se reconoce por el logo de la manzana. */
+html.velo-web button:has(> svg path[d^="M16.37 12.62"]) { display: none !important; }
+
+/* ── Base móvil para web y app (skills mobile-native y apple-design de Emil Kowalski) ── */
+/* Sin el destello gris al tocar (cada botón ya tiene su propio "presionado"). */
+html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+/* La app tiene sus propias zonas con scroll: el tirón hacia abajo no recarga la página. */
+html, body { overscroll-behavior: none; }
+/* Los controles responden al instante (sin la espera de 300 ms del doble toque) y un
+   toque largo no selecciona el texto del botón. El texto de contenido sigue seleccionable. */
+button, a, [role="button"] { touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+/* Transparencia reducida (Ajustes › Accesibilidad): barras y paneles sin vidrio, sólidos. */
+@media (prefers-reduced-transparency: reduce) {
+  [style*="backdrop-filter"] { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+}
+/* Más contraste (Ajustes › Accesibilidad): bordes definidos en tarjetas y botones. */
+@media (prefers-contrast: more) {
+  button, [role="button"] { outline: 1px solid currentColor; outline-offset: -1px; }
+}

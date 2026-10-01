@@ -1,0 +1,14 @@
+{
+  "origen": "telefono",
+  "origen_codigo": 2,
+  "dispositivo": "Node.js/24",
+  "ejercicio_id": 1,
+  "carga_kg": 82.5,
+  "reps_reales": 3,
+  "muestras": 480,
+  "odr_real_hz": 60,
+  "duracion_s": 8,
+  "fecha": "2026-09-01T13:12:26.997Z",
+  "nota": "senal sintetica, solo para verificar el formato",
+  "advertencia": "Grabado con el IMU de un telefono, no con el sensor. Frecuencia y ruido distintos. No mezclar con las grabaciones del sensor al medir precision. Ver firmware/docs/DATASET.md."
+}

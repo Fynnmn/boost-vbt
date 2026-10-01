@@ -1,0 +1,58 @@
+# Renders y material pesado regenerable — fuera del repo a propósito.
+# Se regeneran con `node marca/instagram/render.mjs` y con los scripts de video/anuncio-blender/.
+marca/instagram/salida/
+marca/instagram/ready/
+marca/instagram/upscale/
+marca/instagram/fotos/
+marca/instagram/carrusel/
+video/anuncio-blender/blender/
+video/anuncio-blender/build/
+video/anuncio-blender/salida/
+video/anuncio-blender/references/
+app/docs/referencias/
+marca/marketing/referencias/
+landing/referencias/
+
+# Builds y cachés
+firmware/build/
+firmware/.pio/
+app/.wrangler/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Video / 3D pesado (dúo, 17/9/2026)
+video/trailer/
+video/trailer-realismo/
+video/estudio-blender/
+*.blend
+*.blend1
+*.3mf
+*.mp4
+*.mov
+design-system/node_modules/
+design-system/dist/
+.ai/last-claude.log
+
+video/flow-clac/tmp_v2/
+video/flow-clac/tmp_v3/
+
+# Pantallas generadas (imágenes pesadas; los .md y scripts sí van al repo)
+diseno/pantallas/**/*.png
+video/flow-subidas/
+*.zip
+
+# Frames renderizados de video (regenerables con los scripts de cada carpeta)
+video/**/frames/
+video/**/frames_test/
+video/**/pruebas/
+video/**/audio/
+*.npy
+*.wav
+*.log
+
+# Herramientas locales
+graphify-out/
+.gstack/

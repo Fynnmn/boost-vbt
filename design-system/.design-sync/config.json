@@ -1,0 +1,302 @@
+{
+  "projectId": "b0484660-9c88-47b5-8f1f-e7797dc58900",
+  "shape": "package",
+  "pkg": "boost-design-system",
+  "globalName": "BoostDesignSystem",
+  "buildCmd": "npm run build",
+  "componentSrcMap": {
+    "Pantalla": "src/components/Superficies.jsx",
+    "Tarjeta": "src/components/Superficies.jsx",
+    "Encabezado": "src/components/Superficies.jsx",
+    "Disco": "src/components/Superficies.jsx",
+    "IconoBarra": "src/components/Iconos.jsx",
+    "IconoBarras": "src/components/Iconos.jsx",
+    "IconoCaida": "src/components/Iconos.jsx",
+    "IconoObjetivo": "src/components/Iconos.jsx",
+    "IconoBluetooth": "src/components/Iconos.jsx",
+    "IconoReloj": "src/components/Iconos.jsx",
+    "IconoAviso": "src/components/Iconos.jsx",
+    "IconoMas": "src/components/Iconos.jsx",
+    "IconoMenos": "src/components/Iconos.jsx",
+    "IconoDetener": "src/components/Iconos.jsx",
+    "IconoPausa": "src/components/Iconos.jsx",
+    "IconoReiniciar": "src/components/Iconos.jsx",
+    "IconoFlecha": "src/components/Iconos.jsx",
+    "IconoOnda": "src/components/Iconos.jsx",
+    "IconoMas3": "src/components/Iconos.jsx",
+    "DatoGrande": "src/components/Datos.jsx",
+    "Cifra": "src/components/Datos.jsx",
+    "FilaCifras": "src/components/Datos.jsx",
+    "Aviso": "src/components/Datos.jsx",
+    "Metrica": "src/components/Datos.jsx",
+    "GraficoReps": "src/components/Datos.jsx",
+    "TituloGrafico": "src/components/Datos.jsx",
+    "BotonDisco": "src/components/Controles.jsx",
+    "ControlesSerie": "src/components/Controles.jsx",
+    "Boton": "src/components/Controles.jsx",
+    "Pildora": "src/components/Controles.jsx",
+    "PildoraVidrio": "src/components/Controles.jsx",
+    "CabeceraEjercicio": "src/components/Controles.jsx",
+    "Fila": "src/components/Controles.jsx",
+    "SelectorCarga": "src/components/Controles.jsx",
+    "Conectar": "src/pantallas/Conectar.jsx",
+    "EnVivo": "src/pantallas/EnVivo.jsx",
+    "Resumen": "src/pantallas/Resumen.jsx",
+    "Campo": "src/components/Formularios.jsx",
+    "Interruptor": "src/components/Formularios.jsx",
+    "FilaAjuste": "src/components/Formularios.jsx",
+    "GrupoAjustes": "src/components/Formularios.jsx",
+    "Tabs": "src/components/Formularios.jsx",
+    "Vacio": "src/components/Formularios.jsx",
+    "Simulado": "src/components/Formularios.jsx",
+    "PerfilCargaVelocidad": "src/components/Graficos.jsx",
+    "MiniBarras": "src/components/Graficos.jsx",
+    "Arco": "src/components/Graficos.jsx",
+    "Bateria": "src/components/Graficos.jsx",
+    "Zonas": "src/components/Graficos.jsx",
+    "BarraTitulo": "src/components/Superficies.jsx",
+    "Pasos": "src/components/Superficies.jsx",
+    "Bienvenida": "src/pantallas/Acceso.jsx",
+    "CrearCuenta": "src/pantallas/Acceso.jsx",
+    "IniciarSesion": "src/pantallas/Acceso.jsx",
+    "PermisoBluetooth": "src/pantallas/Acceso.jsx",
+    "BuscandoSensor": "src/pantallas/Vinculacion.jsx",
+    "SensorNoEncontrado": "src/pantallas/Vinculacion.jsx",
+    "Colocacion": "src/pantallas/Vinculacion.jsx",
+    "Calibrando": "src/pantallas/Vinculacion.jsx",
+    "SensorDesconectado": "src/pantallas/Vinculacion.jsx",
+    "Inicio": "src/pantallas/Preparar.jsx",
+    "ElegirEjercicio": "src/pantallas/Preparar.jsx",
+    "ArmarSerie": "src/pantallas/Preparar.jsx",
+    "ObjetivoCorte": "src/pantallas/Preparar.jsx",
+    "SerieEsperando": "src/pantallas/Serie.jsx",
+    "SerieEnCurso": "src/pantallas/Serie.jsx",
+    "SeriePausada": "src/pantallas/Serie.jsx",
+    "Descanso": "src/pantallas/Serie.jsx",
+    "ResumenSesion": "src/pantallas/Resultados.jsx",
+    "Historial": "src/pantallas/Resultados.jsx",
+    "DetalleSesion": "src/pantallas/Resultados.jsx",
+    "PerfilVelocidad": "src/pantallas/Resultados.jsx",
+    "HistorialVacio": "src/pantallas/Resultados.jsx",
+    "Cuenta": "src/pantallas/Cuenta.jsx",
+    "AjustesSensor": "src/pantallas/Cuenta.jsx",
+    "Voz": "src/pantallas/Cuenta.jsx",
+    "Plan": "src/pantallas/Cuenta.jsx",
+    "Ayuda": "src/pantallas/Cuenta.jsx",
+    "IconoUsuario": "src/components/Iconos.jsx",
+    "IconoCorreo": "src/components/Iconos.jsx",
+    "IconoCandado": "src/components/Iconos.jsx",
+    "IconoVolver": "src/components/Iconos.jsx",
+    "IconoCerrar": "src/components/Iconos.jsx",
+    "IconoCampana": "src/components/Iconos.jsx",
+    "IconoDescarga": "src/components/Iconos.jsx",
+    "IconoAyuda": "src/components/Iconos.jsx",
+    "IconoEscudo": "src/components/Iconos.jsx",
+    "IconoRegla": "src/components/Iconos.jsx",
+    "IconoBuscar": "src/components/Iconos.jsx",
+    "IconoTilde": "src/components/Iconos.jsx",
+    "IconoSinSenal": "src/components/Iconos.jsx",
+    "IconoRayo": "src/components/Iconos.jsx",
+    "IconoCalendario": "src/components/Iconos.jsx",
+    "IconoSalir": "src/components/Iconos.jsx"
+  },
+  "dtsPropsFor": {
+    "Pantalla": "children?: React.ReactNode; gap?: number; abajo?: number;",
+    "Tarjeta": "children?: React.ReactNode; alta?: boolean; padding?: string; gap?: number; estilo?: React.CSSProperties;",
+    "Encabezado": "derecha?: React.ReactNode;",
+    "Disco": "children?: React.ReactNode; tam?: number; fondo?: string; sombraPropia?: string; borde?: string;",
+    "IconoBarra": "tam?: number; c?: string; trazo?: number;",
+    "IconoBarras": "tam?: number; c?: string; trazo?: number;",
+    "IconoCaida": "tam?: number; c?: string; trazo?: number;",
+    "IconoObjetivo": "tam?: number; c?: string; trazo?: number;",
+    "IconoBluetooth": "tam?: number; c?: string; trazo?: number;",
+    "IconoReloj": "tam?: number; c?: string; trazo?: number;",
+    "IconoAviso": "tam?: number; c?: string; trazo?: number;",
+    "IconoMas": "tam?: number; c?: string; trazo?: number;",
+    "IconoMenos": "tam?: number; c?: string; trazo?: number;",
+    "IconoDetener": "tam?: number; c?: string;",
+    "IconoPausa": "tam?: number; c?: string;",
+    "IconoReiniciar": "tam?: number; c?: string; trazo?: number;",
+    "IconoFlecha": "tam?: number; c?: string; trazo?: number;",
+    "IconoOnda": "tam?: number; c?: string; trazo?: number;",
+    "IconoMas3": "tam?: number; c?: string; trazo?: number;",
+    "DatoGrande": "valor: React.ReactNode; unidad?: string | null; tam?: number; alerta?: boolean;",
+    "Cifra": "etiqueta?: React.ReactNode; valor: React.ReactNode; sufijo?: React.ReactNode; tam?: number;",
+    "FilaCifras": "items: Array<{ etiqueta: string; valor: React.ReactNode; sufijo?: React.ReactNode }>;",
+    "Aviso": "titulo: React.ReactNode; detalle?: React.ReactNode; icono?: React.ReactNode; tono?: 'corte' | 'neutro';",
+    "Metrica": "etiqueta?: React.ReactNode; valor: React.ReactNode; unidad?: string; pie?: React.ReactNode; icono?: React.ReactNode; tono?: 'neutro' | 'alerta';",
+    "GraficoReps": "velocidades: number[]; objetivo?: number; alto?: number; conValores?: boolean;",
+    "TituloGrafico": "titulo?: React.ReactNode; objetivo?: number;",
+    "BotonDisco": "icono?: React.ReactNode; etiqueta?: React.ReactNode; principal?: boolean;",
+    "ControlesSerie": "izquierda?: React.ReactNode; centro?: React.ReactNode; derecha?: React.ReactNode;",
+    "Boton": "children?: React.ReactNode; coral?: boolean;",
+    "Pildora": "children?: React.ReactNode; viva?: boolean; tenue?: boolean;",
+    "PildoraVidrio": "children?: React.ReactNode; alto?: number;",
+    "CabeceraEjercicio": "nombre?: React.ReactNode; detalle?: React.ReactNode; derecha?: React.ReactNode; icono?: React.ReactNode;",
+    "Fila": "icono?: React.ReactNode; titulo?: React.ReactNode; detalle?: React.ReactNode; derecha?: React.ReactNode; activa?: boolean;",
+    "SelectorCarga": "valor?: number; paso?: number; unidad?: string;",
+    "Conectar": "sensor?: string; bateria?: number; imagenSensor?: string; buscando?: boolean;",
+    "EnVivo": "ejercicio?: string; serie?: number; seriesTotal?: number; rep?: number; repsTotal?: number; carga?: number; velocidades?: number[]; objetivo?: number;",
+    "Resumen": "ejercicio?: string; serie?: number; seriesTotal?: number; carga?: number; repsTotal?: number; velocidades?: number[]; objetivo?: number; descanso?: string;",
+    "Campo": "etiqueta?: React.ReactNode; valor?: string; marcador?: string; foco?: boolean; tipo?: 'texto' | 'clave'; icono?: React.ReactNode;",
+    "Interruptor": "encendido?: boolean;",
+    "FilaAjuste": "titulo?: React.ReactNode; detalle?: React.ReactNode; derecha?: React.ReactNode; icono?: React.ReactNode; ultima?: boolean;",
+    "GrupoAjustes": "titulo?: React.ReactNode; children?: React.ReactNode;",
+    "Tabs": "activa?: 'entrenar' | 'historial' | 'perfil' | 'cuenta';",
+    "Vacio": "titulo?: React.ReactNode; detalle?: React.ReactNode; icono?: React.ReactNode; accion?: React.ReactNode;",
+    "Simulado": "",
+    "PerfilCargaVelocidad": "puntos?: Array<{ carga: number; v: number }>; alto?: number; ancho?: number;",
+    "MiniBarras": "velocidades: number[]; objetivo?: number; alto?: number; gap?: number;",
+    "Arco": "progreso?: number; tam?: number; grosor?: number; etiqueta?: React.ReactNode; valor?: React.ReactNode;",
+    "Bateria": "nivel?: number; ancho?: number;",
+    "Zonas": "velocidad?: number;",
+    "BarraTitulo": "titulo?: React.ReactNode; derecha?: React.ReactNode; cerrar?: boolean;",
+    "Pasos": "actual?: number; total?: number;",
+    "Bienvenida": "imagenSensor?: string;",
+    "CrearCuenta": "",
+    "IniciarSesion": "",
+    "PermisoBluetooth": "imagenSensor?: string;",
+    "BuscandoSensor": "imagenSensor?: string;",
+    "SensorNoEncontrado": "",
+    "Colocacion": "imagenBarra?: string;",
+    "Calibrando": "progreso?: number;",
+    "SensorDesconectado": "",
+    "Inicio": "",
+    "ElegirEjercicio": "",
+    "ArmarSerie": "",
+    "ObjetivoCorte": "modo?: 'perdida' | 'fija';",
+    "SerieEsperando": "",
+    "SerieEnCurso": "velocidades?: number[]; objetivo?: number;",
+    "SeriePausada": "velocidades?: number[];",
+    "Descanso": "restante?: string; objetivo?: string;",
+    "ResumenSesion": "",
+    "Historial": "",
+    "DetalleSesion": "",
+    "PerfilVelocidad": "",
+    "HistorialVacio": "",
+    "Cuenta": "",
+    "AjustesSensor": "",
+    "Voz": "",
+    "Plan": "",
+    "Ayuda": "",
+    "IconoUsuario": "tam?: number; c?: string; trazo?: number;",
+    "IconoCorreo": "tam?: number; c?: string; trazo?: number;",
+    "IconoCandado": "tam?: number; c?: string; trazo?: number;",
+    "IconoVolver": "tam?: number; c?: string; trazo?: number;",
+    "IconoCerrar": "tam?: number; c?: string; trazo?: number;",
+    "IconoCampana": "tam?: number; c?: string; trazo?: number;",
+    "IconoDescarga": "tam?: number; c?: string; trazo?: number;",
+    "IconoAyuda": "tam?: number; c?: string; trazo?: number;",
+    "IconoEscudo": "tam?: number; c?: string; trazo?: number;",
+    "IconoRegla": "tam?: number; c?: string; trazo?: number;",
+    "IconoBuscar": "tam?: number; c?: string; trazo?: number;",
+    "IconoTilde": "tam?: number; c?: string; trazo?: number;",
+    "IconoSinSenal": "tam?: number; c?: string; trazo?: number;",
+    "IconoRayo": "tam?: number; c?: string; trazo?: number;",
+    "IconoCalendario": "tam?: number; c?: string; trazo?: number;",
+    "IconoSalir": "tam?: number; c?: string; trazo?: number;"
+  },
+  "overrides": {
+    "Pantalla": {
+      "cardMode": "column"
+    },
+    "Conectar": {
+      "cardMode": "column"
+    },
+    "EnVivo": {
+      "cardMode": "column"
+    },
+    "Resumen": {
+      "cardMode": "column"
+    },
+    "Bienvenida": {
+      "cardMode": "column"
+    },
+    "CrearCuenta": {
+      "cardMode": "column"
+    },
+    "IniciarSesion": {
+      "cardMode": "column"
+    },
+    "PermisoBluetooth": {
+      "cardMode": "column"
+    },
+    "BuscandoSensor": {
+      "cardMode": "column"
+    },
+    "SensorNoEncontrado": {
+      "cardMode": "column"
+    },
+    "Colocacion": {
+      "cardMode": "column"
+    },
+    "Calibrando": {
+      "cardMode": "column"
+    },
+    "SensorDesconectado": {
+      "cardMode": "column"
+    },
+    "Inicio": {
+      "cardMode": "column"
+    },
+    "ElegirEjercicio": {
+      "cardMode": "column"
+    },
+    "ArmarSerie": {
+      "cardMode": "column"
+    },
+    "ObjetivoCorte": {
+      "cardMode": "column"
+    },
+    "SerieEsperando": {
+      "cardMode": "column"
+    },
+    "SerieEnCurso": {
+      "cardMode": "column"
+    },
+    "SeriePausada": {
+      "cardMode": "column"
+    },
+    "Descanso": {
+      "cardMode": "column"
+    },
+    "ResumenSesion": {
+      "cardMode": "column"
+    },
+    "Historial": {
+      "cardMode": "column"
+    },
+    "DetalleSesion": {
+      "cardMode": "column"
+    },
+    "PerfilVelocidad": {
+      "cardMode": "column"
+    },
+    "HistorialVacio": {
+      "cardMode": "column"
+    },
+    "Cuenta": {
+      "cardMode": "column"
+    },
+    "AjustesSensor": {
+      "cardMode": "column"
+    },
+    "Voz": {
+      "cardMode": "column"
+    },
+    "Plan": {
+      "cardMode": "column"
+    },
+    "Ayuda": {
+      "cardMode": "column"
+    },
+    "BarraTitulo": {
+      "cardMode": "column"
+    },
+    "Zonas": {
+      "cardMode": "column"
+    }
+  },
+  "cssEntry": ".design-sync/assets/fonts.css",
+  "readmeHeader": ".design-sync/conventions.md"
+}

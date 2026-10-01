@@ -1,0 +1,79 @@
+// ============================================================
+// Reglas de Firestore de boost-vbt-landing
+//
+// ESTE ARCHIVO NO SE APLICA SOLO. Hay que pegarlo en:
+//   console.firebase.google.com -> boost-vbt-landing
+//   -> Firestore Database -> Reglas -> Publicar
+//
+// Está versionado acá para que las reglas que protegen la base se puedan
+// leer y revisar junto al código, en vez de vivir sólo dentro de una
+// consola web donde nadie las mira.
+//
+// POR QUÉ IMPORTAN MÁS QUE EL CÓDIGO DEL NAVEGADOR:
+// la config de Firebase viaja en el JavaScript de la página y es pública
+// por diseño. Cualquiera puede tomarla y escribir en la base con curl, sin
+// pasar por el formulario. Toda validación que exista sólo en waitlist.js
+// es una comodidad para el usuario honesto; el único control real es éste.
+//
+// Endurecidas el 30 de agosto de 2026 tras la auditoría /cso.
+// ============================================================
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /boost_waitlist/{email} {
+
+      // Cualquiera puede anotarse una vez.
+      allow create: if
+        // Exactamente estos campos, ni uno más. Sin esto, alguien podía
+        // agregar campos arbitrarios al documento.
+        request.resource.data.keys().hasOnly(
+          ['email', 'origen', 'fecha', 'idioma', 'referrer'])
+
+        // El mail: string, con forma de mail y acotado.
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 5
+        && request.resource.data.email.size() < 200
+        && request.resource.data.email.matches('.+@.+[.].+')
+
+        // El resto de los campos también se valida. ANTES NO SE VALIDABA:
+        // sólo se comprobaba que las CLAVES fueran esas, no su contenido ni
+        // su tamaño. `origen` sale de location.hash y `referrer` del
+        // navegador, así que los controla quien visita la página: se podían
+        // guardar textos de cualquier largo y con cualquier contenido.
+        && request.resource.data.origen is string
+        && request.resource.data.origen.size() <= 200
+        && request.resource.data.fecha is string
+        && request.resource.data.fecha.size() <= 40
+        && request.resource.data.idioma is string
+        && request.resource.data.idioma.size() <= 200
+        && request.resource.data.referrer is string
+        && request.resource.data.referrer.size() <= 200
+
+        // El id del documento tiene que ser el mail normalizado. Evita que
+        // se llene la colección con documentos de ids inventados que no
+        // corresponden a ninguna dirección.
+        && email.size() <= 200
+        // El id ES el mail en minúsculas (27/9/2026). Antes no se comprobaba: con ids
+        // al azar se podía anotar el mismo mail infinitas veces y gastar la cuota diaria.
+        && email == request.resource.data.email.lower();
+
+      // Nadie lee, edita ni borra desde el navegador. Los mails se ven
+      // desde la consola de Firebase.
+      //
+      // VERIFICADO el 30/08/2026 contra producción: una petición sin
+      // autenticar a la API REST de Firestore devuelve 403 PERMISSION_DENIED
+      // tanto al listar la colección como al pedir un documento suelto.
+      allow read, update, delete: if false;
+    }
+
+    // Todo lo que no esté declarado arriba queda cerrado. Es la red de
+    // contención para el día que se cree una colección nueva y se olvide
+    // escribirle reglas.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

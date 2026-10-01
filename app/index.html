@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BOOST — velocidad de barra</title>
+<meta name="description" content="La app del sensor BOOST: mide la velocidad de cada repetición y te dice cuándo subir la carga y cuándo cortar la serie.">
+<meta name="theme-color" content="#070707">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex">
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BOOST">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+
+<body data-view="train">
+
+<!-- El halo del fondo. Un solo elemento fijo: saca a la app del negro
+     liso sin costar repintados. -->
+<div class="ambiente" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="#" aria-label="BOOST">
+    <img src="assets/simbolo.png" width="320" height="210" alt="" aria-hidden="true">
+    <span>BOOST<i>.</i></span>
+  </a>
+
+  <div style="display:flex; align-items:center; gap:.5rem;">
+    <button class="iconbtn" id="btnVoz" type="button" aria-label="Manos libres" aria-pressed="false"></button>
+    <button class="iconbtn" id="btnSonido" type="button" aria-label="Sonido"></button>
+    <button class="chip chip--device" id="deviceChip" type="button" aria-live="polite">
+      <span class="dot" id="deviceDot"></span>
+      <span id="deviceLabel">Sin conectar</span>
+      <span class="batt" id="deviceBatt" hidden></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================
+     ENTRENAR
+     ============================================================ -->
+<section class="view" id="view-train">
+
+  <!-- 1. Sin conectar -->
+  <div class="panel panel--connect" id="panel-connect">
+    <div class="pair">
+      <div class="pair__rings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <img class="pair__dev" src="assets/dispositivo.webp" width="460" height="320"
+           alt="El sensor BOOST" fetchpriority="high">
+    </div>
+
+    <p class="eyebrow">Paso 1 de 2</p>
+    <h1>Poné el sensor<br>en la barra</h1>
+    <p class="lead">Se pega con los imanes al eje de la barra, entre el agarre y los discos.</p>
+
+    <p class="note" id="bleNote" hidden></p>
+
+    <p class="warn warn--install" id="iosNote" hidden>
+      <span id="iosNoteIco"></span>
+      <span><b>Instalá la app antes de usarla.</b> En iPhone, Safari borra los datos
+      guardados de un sitio a los 7 días sin visitas, y con eso se iría tu
+      historial. Tocá <b>Compartir</b> y después <b>Agregar a inicio</b>.</span>
+    </p>
+
+    <div class="spacer"></div>
+
+    <button class="btn btn--primary btn--big" id="btnConnect" type="button">
+      <span id="icoConnect"></span><span>Conectar sensor</span>
+    </button>
+    <button class="btn btn--ghost" id="btnSim" type="button">Probar sin sensor</button>
+  </div>
+
+  <!-- 2. Conectado, antes de la serie -->
+  <div class="panel panel--setup" id="panel-setup" hidden>
+    <div class="exercises" id="exercises" role="radiogroup" aria-label="Ejercicio"></div>
+
+    <div class="loadcard">
+      <p class="loadcard__h">Carga en la barra</p>
+
+      <div class="load">
+        <button class="load__step" id="loadMinus" type="button" aria-label="Bajar 2,5 kg"></button>
+        <div class="load__value">
+          <input id="loadInput" class="load__num" type="text" inputmode="decimal"
+                 value="60" aria-label="Carga en kilos">
+          <span class="load__unit">kg</span>
+        </div>
+        <button class="load__step" id="loadPlus" type="button" aria-label="Subir 2,5 kg"></button>
+      </div>
+
+      <!-- La aguja va FUERA del contenedor que scrollea: adentro se
+           desplazaría junto con los ticks y dejaría de marcar el centro. -->
+      <div class="rulerwrap">
+        <div class="ruler" id="ruler" role="slider" aria-label="Carga"
+             aria-valuemin="0" aria-valuemax="300" aria-valuenow="60" tabindex="0">
+          <div class="ruler__track" id="rulerTrack" aria-hidden="true"></div>
+        </div>
+        <div class="ruler__needle" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <!-- Lo que antes era un hueco de 300px: la lectura del perfil -->
+    <div class="predict" id="predict" hidden>
+      <div>
+        <div class="predict__l">Debería salir a</div>
+        <div class="predict__v"><b id="predictVel">—</b><span>m/s</span></div>
+      </div>
+      <div class="predict__z">
+        <div class="predict__l">Zona</div>
+        <div id="predictZona">—</div>
+      </div>
+    </div>
+
+    <div class="lastset" id="lastSet" hidden>
+      <span id="lastSetWhen">Última vez</span>
+      <b id="lastSetWhat">—</b>
+    </div>
+
+    <p class="note" id="setupHint"></p>
+
+    <div class="spacer"></div>
+
+    <button class="btn btn--primary btn--big" id="btnStart" type="button">
+      <span id="icoStart"></span><span>Comenzar serie</span>
+    </button>
+    <p class="note note--calib">Apoyá la barra un segundo antes de levantar:
+       el sensor se calibra solo en esa pausa.</p>
+  </div>
+
+  <!-- 3. Serie en curso -->
+  <div class="panel panel--live" id="panel-live" hidden>
+    <div class="live__chips">
+      <span class="chip" id="liveExercise">Press banca</span>
+      <span class="chip chip--load"><b id="liveLoad">60</b>&nbsp;kg</span>
+      <span class="chip chip--state" id="liveState">Calibrando</span>
+    </div>
+
+    <div class="live__hero">
+      <!-- Antes de la primera repetición no hay número que mostrar. Un
+           guión suelto parecía la app colgada; esto dice qué pasa. -->
+      <div class="waiting" id="liveWaiting">
+        <div class="waiting__pulse" aria-hidden="true"><i></i><i></i></div>
+        <p class="waiting__title" id="waitingTitle">Calibrando</p>
+        <p class="waiting__sub" id="waitingSub">Dejá la barra apoyada un segundo.</p>
+      </div>
+
+      <div class="live__num" id="liveNum" hidden>
+        <div class="repidx" id="repIdx">REP 01</div>
+        <output class="bignum" id="bigVel">—</output>
+        <div class="numline">
+          <span class="numline__u">m/s</span>
+          <span class="numline__sep"></span>
+          <span class="zone" id="liveZone"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="setcard" id="liveBars" hidden>
+      <div class="bars" id="bars" aria-hidden="true"></div>
+      <div class="setcard__sep"></div>
+      <div class="minigrid">
+        <div>
+          <div class="minigrid__v" id="mReps">0</div>
+          <div class="minigrid__l">REPS</div>
+        </div>
+        <div>
+          <div class="minigrid__v" id="mMejor">—</div>
+          <div class="minigrid__l">MEJOR</div>
+        </div>
+        <div>
+          <div class="minigrid__v" id="mPerdida">—</div>
+          <div class="minigrid__l">PÉRDIDA</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="warn" id="liveWarn" hidden></p>
+
+    <button class="btn btn--stop btn--big" id="btnStop" type="button">
+      <span id="icoStop"></span><span>Terminar serie</span>
+    </button>
+  </div>
+
+  <!-- 4. Resumen -->
+  <div class="panel panel--summary" id="panel-summary" hidden>
+    <p class="eyebrow" id="sumEyebrow">Serie terminada</p>
+    <div class="sum__head" id="sumHead"></div>
+
+    <div class="chartbox">
+      <svg class="chart" id="sumChart" viewBox="0 0 320 168"
+           role="img" aria-label="Velocidad por repetición"></svg>
+      <div class="chart__labels" id="sumChartLabels"></div>
+    </div>
+
+    <div class="stats" id="sumStats"></div>
+
+    <p class="verdict" id="sumVerdict"></p>
+    <p class="warn" id="sumWarn" hidden></p>
+
+    <!-- Sólo aparece cuando el giroscopio detectó rotación importante,
+         que es el flag que significa "el sensor puede estar mal montado".
+         Ahí una foto de cómo va puesto es la respuesta al problema. -->
+    <figure class="mount" id="sumMount" hidden>
+      <img src="assets/sensor-en-barra.webp" width="1100" height="1100" loading="lazy"
+           alt="El sensor pegado al eje de la barra, entre el agarre y los discos">
+      <figcaption>Así va puesto: pegado al eje, por dentro del collar. En la manga no, porque gira
+        y con el logo hacia arriba.</figcaption>
+    </figure>
+
+    <div class="row">
+      <button class="btn btn--outline-accent" id="btnDiscard" type="button">Descartar</button>
+      <button class="btn btn--primary" id="btnNext" type="button">
+        <span id="icoSave"></span><span>Guardar</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HISTORIAL
+     ============================================================ -->
+<section class="view" id="view-history" hidden>
+  <h1 class="view__title">Historial</h1>
+
+  <div class="heatcard" id="heatcard" hidden>
+    <div class="heatcard__head">
+      <span class="zonetable__h">Últimas 18 semanas</span>
+      <span><b id="heatCount">0</b> sesiones</span>
+    </div>
+    <div class="heatmap" id="heatmap" aria-label="Constancia de las últimas semanas"></div>
+  </div>
+
+  <div class="sessions" id="sessions"></div>
+
+  <div class="row row--end">
+    <button class="btn btn--ghost btn--sm" id="btnExport" type="button">
+      <span id="icoExport"></span><span>Exportar CSV</span>
+    </button>
+    <button class="btn btn--ghost btn--sm btn--danger" id="btnWipe" type="button">
+      <span id="icoWipe"></span><span>Borrar todo</span>
+    </button>
+  </div>
+
+  <p class="legal">Tus series se guardan sólo en este teléfono: no hay cuenta,
+    no hay servidor y no se sube nada. <b>Exportar CSV</b> te las descarga
+    todas. <a href="legal.html">Términos, privacidad y seguridad</a></p>
+</section>
+
+<!-- ============================================================
+     PERFIL CARGA-VELOCIDAD
+     ============================================================ -->
+<section class="view" id="view-profile" hidden>
+  <h1 class="view__title">Perfil</h1>
+  <div class="exercises exercises--sm" id="profExercises" role="radiogroup" aria-label="Ejercicio del perfil"></div>
+  <div class="prof" id="profBody"></div>
+</section>
+
+</main>
+
+<nav class="tabs" id="tabs">
+  <button type="button" data-view="train" class="is-on"><span data-ico="barra"></span>Entrenar</button>
+  <button type="button" data-view="history"><span data-ico="historial"></span>Historial</button>
+  <button type="button" data-view="profile"><span data-ico="perfil"></span>Perfil</button>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

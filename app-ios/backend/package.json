@@ -1,0 +1,18 @@
+{
+  "name": "boost-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "emu": "node scripts/emu.mjs",
+    "test": "node scripts/emu.mjs emulators:exec --only firestore --project demo-boost \"node --test test/*.test.mjs\"",
+    "deploy:rules": "firebase deploy --only firestore:rules,firestore:indexes",
+    "test:worker": "node scripts/emu.mjs emulators:exec --only auth,firestore --project demo-boost \"node --test worker/test/*.test.mjs\"",
+    "setup": "node scripts/setup.mjs",
+    "setup:todo": "node scripts/setup.mjs --worker"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase": "^12.0.0",
+    "firebase-tools": "^14.0.0"
+  }
+}
