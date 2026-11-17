@@ -1,0 +1,9 @@
+# BOOST — https://getboost.fit
+# Sitio de una sola pagina: se permite todo. Las carpetas de trabajo
+# (images/, referencias/) no se suben al deploy, asi que no hace falta
+# bloquearlas aca.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://getboost.fit/sitemap.xml
